@@ -10,6 +10,7 @@ typedef struct elemQ2{
     unsigned int anio;
     size_t cantP_anio;
     struct elemQ2* tail;
+    struct elemQ2* iterador;
 }elemQ2;
 
 typedef struct elemQ3{
@@ -119,7 +120,24 @@ int processData(const char* sensor, const char* reading, dataADT* data){
 
 void query1(dataADT data);
 
-void query2(dataADT data);
+void query2(dataADT data){
+    FILE *query2 = fopen("query2.csv", "w");
+    fprintf(query2, "year;counts\n");
+    while(hasNext(data->firstQ2->iterador)){//falta inicializar iterador en first
+        fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
+    }
+}
+
+static int hasNext(const listQ2 l){
+     return l->iterador != NULL;
+}
+
+static listQ2 next(listQ2 l){
+     assert(hasNext(l)); // chequeo que no tendriamos que hacer en el backend, corregir
+     listQ2 aux = l->iterador;
+     l->iterador = l->iterador->tail;
+     return aux;
+}
 
 void query3(dataADT data);
 
