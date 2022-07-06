@@ -65,7 +65,7 @@ static int cargarsensor (size_t id,char* name,dataADT data)
 
 static int cargarsensores(size_t id, char* name, dataADT data)
 {
-    if (data->posultelem == data->dimVQ1)
+    if (data->posUltElem == data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
     }
