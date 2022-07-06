@@ -82,7 +82,6 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
     else
     {
-    
         data->VQ1[data->posUltElem].id=id;
         data->VQ1[data->posUltElem].name=name;
         data->VQ1[data->posUltElem].cantP_sensor=0;
@@ -133,14 +132,17 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         return ENOMEM;
     }
     FILE *sensors = fopen(sensor, "rt");
+    if(sensors == NULL)
+        return NOT_EXIST;
+    FILE *readings = fopen(reading, "rt");
+    if(readings == NULL)
+        return NOT_EXIST;
     char line[MAX_LINE];
     char* value;
     char* name;
     char* activo;
     size_t id;
     fgets(line, MAX_LINE, sensors);
-    if(sensors == NULL)
-        return NOT_EXIST;
     while(fgets(line, MAX_LINE, sensors)){
         value = strtok(line, ";");
         id = strtoul(value, NULL, 10);
@@ -151,9 +153,17 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         printf("%s", activo);
         //llamar a funcion que se encarga de usarlos
     }
-    FILE *readings = fopen(reading, "rt");
-    if(readings == NULL)
-        return NOT_EXIST;
+    fgets(line, MAX_LINE, readings);
+    while(fgets(line, MAX_LINE, readings)){
+        value = strtok(line, ";");
+        id = strtoul(value, NULL, 10);
+        printf("%zu\t", id);
+        name = strtok(NULL, ";");
+        printf("%s\t\t", name);
+        activo = strtok(NULL, ";");
+        printf("%s", activo);
+        //llamar a funcion que se encarga de usarlos
+    }
     fclose(sensors);
     fclose(readings);
     free(new);
