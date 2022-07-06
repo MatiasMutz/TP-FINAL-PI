@@ -63,26 +63,32 @@ static int cargarsensor (size_t id,char* name,dataADT data)
 }
 */
 
-static int cargarsensores(size_t id, char* name, dataADT data)
+static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
-    if (data->posUltElem == data->dimVQ1)
+    if (data->posUltElem+1 == data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
     }
 
+
 }
 
-static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
+static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
 {
     
 }
 
 
-static void addYear(listQ2 l, unsigned int year, size_t cantPers){
+static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
-        listQ2 aux = malloc(sizeof(listQ2));
+        listQ2 aux = malloc(sizeof(elemQ2));
+        if (errno==ENOMEM)
+        {
+            *flag=ENOMEM;
+        }
         aux->anio = year;
         aux->cantP_anio = cantPers;
+        aux->tail=l;
         return aux;
     }
     else if(year == l->anio){
@@ -90,9 +96,16 @@ static void addYear(listQ2 l, unsigned int year, size_t cantPers){
         return l;
     }
     else{
-        l->tail = addYear(l->tail, year, cantPers);
+        l->tail = addYearRec(l->tail, year, cantPers);
     }
     return l;
+}
+
+static int addYear (dataADT data,const unsigned int year,const size_t cantPers)
+{
+    int flag=0;
+    data->firstQ2=addYearRec(data->firstQ2,year,cantPers,&flag);
+    return flag;
 }
 
 int processData(const char* sensor, const char* reading, dataADT* data){
