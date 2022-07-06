@@ -11,7 +11,7 @@ typedef struct elemQ2{
     size_t cantP_anio;
     struct elemQ2* tail;
 }elemQ2;
-
+typedef elemQ2* listQ2;
 typedef struct elemQ3{
     char* dia;
     size_t cantP_diurno;
@@ -19,15 +19,17 @@ typedef struct elemQ3{
 }elemQ3;
 
 typedef struct dataCDT{
-    elemQ1* firstQ1;
-    elemQ2* firstQ2;
+    elemQ1* VQ1;
+    size_t dimVQ1;
+    size_t posUltElem;
+    listQ2 firstQ2;
     elemQ3 dias[7];
 }dataCDT;
 
 static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
-
+/*
 static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
 {
     int c;
@@ -58,6 +60,16 @@ static int cargarsensor (size_t id,char* name,dataADT data)
         malloc(sizeof())
     }
     return flag;
+}
+*/
+
+static int cargarsensores(size_t id, char* name, dataADT data)
+{
+    if (data->posultelem == data->dimVQ1)
+    {
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
+    }
+
 }
 
 static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
