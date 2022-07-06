@@ -71,12 +71,23 @@ static int cargarsensor (size_t id,char* name,dataADT data)
 
 static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
-    if (data->posUltElem+1 == data->dimVQ1)
+    if (data->posUltElem == data->dimVQ1)
     {
-        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);        
     }
-
-
+    if (errno==ENOMEM)
+    {
+        return ENOMEM;
+    }
+    else
+    {
+    
+        data->VQ1[data->posUltElem].id=id;
+        data->VQ1[data->posUltElem].name=name;
+        data->VQ1[data->posUltElem].cantP_sensor=0;
+        data->posUltElem++;
+        return OK;
+    }
 }
 
 static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
@@ -145,7 +156,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     fclose(sensors);
     fclose(readings);
     free(new);
-    return 1;
+    return OK;
 }
 
 void query1(dataADT data){
