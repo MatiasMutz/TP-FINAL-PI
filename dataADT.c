@@ -149,7 +149,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return 1;
 }
 
-void query1(dataADT data){
+int query1(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
     }
@@ -159,6 +159,7 @@ void query1(dataADT data){
         fprintf(query1, data->VQ1[i].name + ";" + data->VQ1[i].cantP_sensor + '\n');
     }
     fclose(query1);
+    return OK;
 }
 
 int query2(dataADT data){
@@ -172,6 +173,7 @@ int query2(dataADT data){
         fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
     }
     fclose(query2);
+    return OK;
 }
 
 static int hasNext(const listQ2 l){
@@ -185,6 +187,6 @@ static listQ2 next(listQ2 l){
      return aux;
 }
 
-void query3(dataADT data);
+int query3(dataADT data);
 
 void freeAll(dataADT data);
