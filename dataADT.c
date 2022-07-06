@@ -1,5 +1,8 @@
- #include "dataADT.h"
+#include "dataADT.h"
+
 #define BLOCK 20
+#define MAX_LINE 1024
+
 typedef struct elemQ1{
     size_t id;
     size_t cantP_sensor;
@@ -13,6 +16,8 @@ typedef struct elemQ2{
     struct elemQ2* iterador;
 }elemQ2;
 
+typedef elemQ2* listQ2;
+
 typedef struct elemQ3{
     char* dia;
     size_t cantP_diurno;
@@ -20,8 +25,10 @@ typedef struct elemQ3{
 }elemQ3;
 
 typedef struct dataCDT{
-    elemQ1* firstQ1;
-    elemQ2* firstQ2;
+    elemQ1* VQ1;
+    size_t dimVQ1;
+    size_t posUltElem;
+    listQ2 firstQ2;
     elemQ3 dias[7];
 }dataCDT;
 
@@ -29,6 +36,7 @@ static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
 
+/*
 static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
 {
     int c;
@@ -60,18 +68,34 @@ static int cargarsensor (size_t id,char* name,dataADT data)
     }
     return flag;
 }
+*/
 
-static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
+static int cargarsensores(const size_t id,const char* name, dataADT data)
+{
+    if (data->posUltElem+1 == data->dimVQ1)
+    {
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
+    }
+
+
+}
+
+static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
 {
     
 }
 
 
-static void addYear(listQ2 l, unsigned int year, size_t cantPers){
+static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
-        listQ2 aux = malloc(sizeof(listQ2));
+        listQ2 aux = malloc(sizeof(elemQ2));
+        if (errno==ENOMEM)
+        {
+            *flag=ENOMEM;
+        }
         aux->anio = year;
         aux->cantP_anio = cantPers;
+        aux->tail=l;
         return aux;
     }
     else if(year == l->anio){
@@ -79,9 +103,16 @@ static void addYear(listQ2 l, unsigned int year, size_t cantPers){
         return l;
     }
     else{
-        l->tail = addYear(l->tail, year, cantPers);
+        l->tail = addYearRec(l->tail, year, cantPers);
     }
     return l;
+}
+
+static int addYear (dataADT data,const unsigned int year,const size_t cantPers)
+{
+    int flag=0;
+    data->firstQ2=addYearRec(data->firstQ2,year,cantPers,&flag);
+    return flag;
 }
 
 int processData(const char* sensor, const char* reading, dataADT* data){
@@ -118,7 +149,14 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return 1;
 }
 
-void query1(dataADT data);
+void query1(dataADT data){
+    FILE* query1 = fopen("query1.csv", "w");
+    fprintf(query1, "sensor;counts\n");
+    for (int i = 0; i < data->dimVQ1; ++i) {
+        fprintf(query1, data->VQ1[i].name + ";" + data->VQ1[i].cantP_sensor + '\n');
+    }
+    fclose(query1);
+}
 
 void query2(dataADT data){
     FILE *query2 = fopen("query2.csv", "w");
