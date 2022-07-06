@@ -4,4 +4,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+typedef struct dataCDT * dataADT;
+
+//devuelve un nuevo "data"
+dataADT newData();
+
+//procesa los datos de los archivos
+int processData(const char* reading, const char* sensors);
+
+//libera la memoria
+void freeAll(dataADT data);
+
 #endif //TPE_FINAL_DATAADT_H
