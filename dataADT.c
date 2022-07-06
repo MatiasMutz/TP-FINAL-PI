@@ -150,6 +150,9 @@ int processData(const char* sensor, const char* reading, dataADT* data){
 }
 
 void query1(dataADT data){
+    if(data == NULL){
+        return NOT_PROCESSED;
+    }
     FILE* query1 = fopen("query1.csv", "w");
     fprintf(query1, "sensor;counts\n");
     for (int i = 0; i < data->dimVQ1; ++i) {
@@ -158,7 +161,10 @@ void query1(dataADT data){
     fclose(query1);
 }
 
-void query2(dataADT data){
+int query2(dataADT data){
+    if(data == NULL){
+        return NOT_PROCESSED;
+    }
     FILE *query2 = fopen("query2.csv", "w");
     fprintf(query2, "year;counts\n");
     while(hasNext(data->firstQ2->iterador)){//falta inicializar iterador en first
