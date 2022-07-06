@@ -65,7 +65,7 @@ static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
     
 }
 
-int processData(const char* reading, const char* sensor, dataADT* data){
+
 static void addYear(listQ2 l, unsigned int year, size_t cantPers){
     if(l == NULL || year > l->anio){
         listQ2 aux = malloc(sizeof(listQ2));
