@@ -28,7 +28,7 @@ typedef struct dataCDT{
 static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
- 
+
 int processData(const char* reading, const char* sensors){
     errno = 0;
     dataADT new = newData();
