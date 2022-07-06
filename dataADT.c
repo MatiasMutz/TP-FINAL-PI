@@ -26,7 +26,6 @@ typedef struct dataCDT{
 
  dataADT newData()
  {
-    errno=0;
     return calloc(1,sizeof(dataCDT));
  }
  
