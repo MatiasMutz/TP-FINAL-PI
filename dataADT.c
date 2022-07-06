@@ -66,6 +66,24 @@ static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
 }
 
 int processData(const char* reading, const char* sensor, dataADT* data){
+static void addYear(listQ2 l, unsigned int year, size_t cantPers){
+    if(l == NULL || year > l->anio){
+        listQ2 aux = malloc(sizeof(listQ2));
+        aux->anio = year;
+        aux->cantP_anio = cantPers;
+        return aux;
+    }
+    else if(year == l->anio){
+        l->cantP_anio += cantPers;
+        return l;
+    }
+    else{
+        l->tail = addYear(l->tail, year, cantPers);
+    }
+    return l;
+}
+
+int processData(const char* sensor, const char* reading, dataADT* data){
     errno = 0;
     dataADT new = newData();
     if(errno == ENOMEM){
@@ -93,6 +111,8 @@ int processData(const char* reading, const char* sensor, dataADT* data){
     FILE *readings = fopen(reading, "rt");
     if(readings == NULL)
         return NOT_EXIST;
+    fclose(sensors);
+    fclose(readings);
     free(new);
     return 1;
 }
