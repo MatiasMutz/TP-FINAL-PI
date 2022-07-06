@@ -113,7 +113,7 @@ static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,
         return l;
     }
     else{
-        l->tail = addYearRec(l->tail, year, cantPers);
+        l->tail = addYearRec(l->tail, year, cantPers,flag);
     }
     return l;
 }
