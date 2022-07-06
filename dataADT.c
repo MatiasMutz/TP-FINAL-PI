@@ -167,7 +167,8 @@ int query2(dataADT data){
     }
     FILE *query2 = fopen("query2.csv", "w");
     fprintf(query2, "year;counts\n");
-    while(hasNext(data->firstQ2->iterador)){//falta inicializar iterador en first
+    data->firstQ2->iterador = data->firstQ2;
+    while(hasNext(data->firstQ2->iterador)){
         fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
     }
     fclose(query2);
