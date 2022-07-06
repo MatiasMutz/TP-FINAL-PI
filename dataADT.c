@@ -13,6 +13,7 @@ typedef struct elemQ2{
     unsigned int anio;
     size_t cantP_anio;
     struct elemQ2* tail;
+    struct elemQ2* iterador;
 }elemQ2;
 
 typedef elemQ2* listQ2;
@@ -159,17 +160,44 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return OK;
 }
 
-void query1(dataADT data){
+int query1(dataADT data){
+    if(data == NULL){
+        return NOT_PROCESSED;
+    }
     FILE* query1 = fopen("query1.csv", "w");
     fprintf(query1, "sensor;counts\n");
     for (int i = 0; i < data->dimVQ1; ++i) {
         fprintf(query1, data->VQ1[i].name + ";" + data->VQ1[i].cantP_sensor + '\n');
     }
     fclose(query1);
+    return OK;
 }
 
-void query2(dataADT data);
+int query2(dataADT data){
+    if(data == NULL){
+        return NOT_PROCESSED;
+    }
+    FILE *query2 = fopen("query2.csv", "w");
+    fprintf(query2, "year;counts\n");
+    data->firstQ2->iterador = data->firstQ2;
+    while(hasNext(data->firstQ2->iterador)){
+        fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
+    }
+    fclose(query2);
+    return OK;
+}
 
-void query3(dataADT data);
+static int hasNext(const listQ2 l){
+     return l->iterador != NULL;
+}
+
+static listQ2 next(listQ2 l){
+     assert(hasNext(l)); // chequeo que no tendriamos que hacer en el backend, corregir
+     listQ2 aux = l->iterador;
+     l->iterador = l->iterador->tail;
+     return aux;
+}
+
+int query3(dataADT data);
 
 void freeAll(dataADT data);

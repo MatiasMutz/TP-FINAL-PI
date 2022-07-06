@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
-enum ERRORS {OK=0, ARG_INV, NOT_EXIST ,NO_MEMORY = ENOMEM};
+enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM};
 
 typedef struct dataCDT * dataADT;
 
