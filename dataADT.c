@@ -1,10 +1,9 @@
  #include "dataADT.h"
-
+#define BLOCK 20
 typedef struct elemQ1{
     size_t id;
     size_t cantP_sensor;
     char* name;
-    struct elemQ1* tail;
 }elemQ1;
 
 typedef elemQ1* listQ1;
@@ -57,7 +56,10 @@ static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
 static int cargarsensor (size_t id,char* name,dataADT data)
 {
     int flag=0;
-    data->firstQ1=cargarsensorActivosRec(id,name,data->firstQ1,&flag);
+    if (data->firstQ1==NULL)
+    {
+        malloc(sizeof())
+    }
     return flag;
 }
 
