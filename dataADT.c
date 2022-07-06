@@ -28,14 +28,20 @@ typedef struct dataCDT{
 static dataADT newData(){
     return calloc(1,sizeof(dataCDT));
 }
+
  
- 
-int processData(const char* reading, const char* sensors, dataADT* data){
+int processData(const char* reading, const char* sensor, dataADT* data){
     errno = 0;
     dataADT new = newData();
     if(errno == ENOMEM){
         return ENOMEM;
     }
+    FILE *sensors = fopen(sensor, "rt");
+    if(sensors == NULL)
+        return NOT_EXIST;
+    FILE *readings = fopen(reading, "rt");
+    if(readings == NULL)
+        return NOT_EXIST;
 }
 
 void query1(dataADT data);

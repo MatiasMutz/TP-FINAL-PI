@@ -5,10 +5,12 @@
 #include <string.h>
 #include <errno.h>
 
+enum ERRORS {OK=0, ARG_INV, NOT_EXIST ,NO_MEMORY = ENOMEM};
+
 typedef struct dataCDT * dataADT;
 
 //procesa los datos de los archivos
-int processData(const char* reading, const char* sensors, dataADT* data);
+int processData(const char* reading, const char* sensor, dataADT* data);
 void query1(dataADT data);
 void query2(dataADT data);
 void query3(dataADT data);
