@@ -1,5 +1,8 @@
- #include "dataADT.h"
+#include "dataADT.h"
+
 #define BLOCK 20
+#define MAX_LINE 1024
+
 typedef struct elemQ1{
     size_t id;
     size_t cantP_sensor;
@@ -11,7 +14,9 @@ typedef struct elemQ2{
     size_t cantP_anio;
     struct elemQ2* tail;
 }elemQ2;
+
 typedef elemQ2* listQ2;
+
 typedef struct elemQ3{
     char* dia;
     size_t cantP_diurno;
@@ -29,6 +34,7 @@ typedef struct dataCDT{
 static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
+
 /*
 static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
 {
@@ -69,7 +75,6 @@ static int cargarsensores(size_t id, char* name, dataADT data)
     {
         data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);
     }
-
 }
 
 static int cargarPeatonesQ1(size_t cantPeatones,size_t id,dataADT data)
@@ -129,7 +134,14 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return 1;
 }
 
-void query1(dataADT data);
+void query1(dataADT data){
+    FILE* query1 = fopen("query1.csv", "w");
+    fprintf(query1, "sensor;counts\n");
+    for (int i = 0; i < data->dimVQ1; ++i) {
+        fprintf(query1, data->VQ1[i].name + ";" + data->VQ1[i].cantP_sensor + '\n');
+    }
+    fclose(query1);
+}
 
 void query2(dataADT data);
 
