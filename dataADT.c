@@ -32,10 +32,10 @@ typedef struct dataCDT{
 int processData(const char* reading, const char* sensors, dataADT* data)
 {
      errno = 0;
-    dataADT new = newData();
-    if(errno == ENOMEM){
-        return ENOMEM;
-    }
+     dataADT new = newData();
+     if(errno == ENOMEM){
+         return ENOMEM;
+     }
 }
 
 void query1(dataADT data);
