@@ -6,14 +6,11 @@ typedef struct elemQ1{
     char* name;
 }elemQ1;
 
-typedef elemQ1* listQ1;
 typedef struct elemQ2{
     unsigned int anio;
     size_t cantP_anio;
     struct elemQ2* tail;
 }elemQ2;
-
-typedef elemQ2* listQ2;
 
 typedef struct elemQ3{
     char* dia;
@@ -22,13 +19,13 @@ typedef struct elemQ3{
 }elemQ3;
 
 typedef struct dataCDT{
-    listQ1 firstQ1;
-    listQ2 firstQ2;
+    elemQ1* firstQ1;
+    elemQ2* firstQ2;
     elemQ3 dias[7];
 }dataCDT;
 
 static dataADT newData(){
-    return calloc(1,sizeof(dataCDT));
+    return calloc(1, sizeof(dataCDT));
 }
 
 static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
@@ -75,12 +72,29 @@ int processData(const char* reading, const char* sensor, dataADT* data){
         return ENOMEM;
     }
     FILE *sensors = fopen(sensor, "rt");
+    char line[MAX_LINE];
+    char* value;
+    char* name;
+    char* activo;
+    size_t id;
+    fgets(line, MAX_LINE, sensors);
     if(sensors == NULL)
         return NOT_EXIST;
-
+    while(fgets(line, MAX_LINE, sensors)){
+        value = strtok(line, ";");
+        id = strtoul(value, NULL, 10);
+        printf("%zu\t", id);
+        name = strtok(NULL, ";");
+        printf("%s\t\t", name);
+        activo = strtok(NULL, ";");
+        printf("%s", activo);
+        //llamar a funcion que se encarga de usarlos
+    }
     FILE *readings = fopen(reading, "rt");
     if(readings == NULL)
         return NOT_EXIST;
+    free(new);
+    return 1;
 }
 
 void query1(dataADT data);
