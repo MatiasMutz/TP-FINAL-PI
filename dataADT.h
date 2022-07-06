@@ -8,7 +8,10 @@
 typedef struct dataCDT * dataADT;
 
 //procesa los datos de los archivos
-int processData(const char* reading, const char* sensors);
+int processData(const char* reading, const char* sensors, dataADT* data);
+void query1(dataADT data);
+void query2(dataADT data);
+void query3(dataADT data);
 
 //libera la memoria
 void freeAll(dataADT data);
