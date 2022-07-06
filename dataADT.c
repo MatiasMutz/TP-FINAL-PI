@@ -10,6 +10,7 @@ typedef struct elemQ1{
 typedef struct elemQ2{
     unsigned int anio;
     size_t cantP_anio;
+    struct elemQ2* tail;
 }elemQ2;
 
 typedef struct elemQ3{
