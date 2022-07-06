@@ -7,9 +7,6 @@
 
 typedef struct dataCDT * dataADT;
 
-//devuelve un nuevo "data"
-dataADT newData();
-
 //procesa los datos de los archivos
 int processData(const char* reading, const char* sensors);
 

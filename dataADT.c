@@ -18,17 +18,23 @@ typedef struct elemQ3{
     size_t cantP_diurno;
     size_t cantP_nocturno;
 }elemQ3;
+
 typedef struct dataCDT{
     elemQ1* firstQ1;
     elemQ2* firstQ2;
     elemQ3 dias[7];
- }dataCDT;
+}dataCDT;
 
- dataADT newData()
- {
-    return calloc(1,sizeof(dataCDT));
- }
+static dataADT newData(){
+    return calloc(1, sizeof(dataCDT));
+}
  
-int processData(const char* reading, const char* sensors);
+int processData(const char* reading, const char* sensors){
+    errno = 0;
+    dataADT new = newData();
+    if(errno == ENOMEM){
+        return ENOMEM;
+    }
+}
 
 void freeAll(dataADT data);
