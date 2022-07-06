@@ -164,6 +164,7 @@ void query2(dataADT data){
     while(hasNext(data->firstQ2->iterador)){//falta inicializar iterador en first
         fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
     }
+    fclose(query2);
 }
 
 static int hasNext(const listQ2 l){
