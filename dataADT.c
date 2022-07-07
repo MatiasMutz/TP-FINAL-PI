@@ -91,11 +91,33 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
 }
 
-static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
+static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
 {
-    
+    int i;
+    for ( i=0;i<data->dimVQ1 && id!=data->VQ1[i].id;i++);
+    if(i<data->dimVQ1)
+    {
+            data->VQ1[i].cantP_sensor+=cantPeatones;
+    }
+}
+static int compare(elemQ1 elem1,elemQ1 elem2)
+{
+    int rta;
+    if ((rta=elem2.cantP_sensor - elem1.cantP_sensor)!=0)
+    {
+            return rta;
+    }
+    else
+    {
+        return strcmp(elem2.name,elem1.name);
+    }
 }
 
+static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
+{
+    if (VQ1!=NULL)
+    qsort(VQ1,sizeof(VQ1[0]),dim,compare);
+}
 
 static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
