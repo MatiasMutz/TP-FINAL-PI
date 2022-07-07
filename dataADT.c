@@ -329,9 +329,8 @@ static void freeRec(listQ2 l){
     if(l == NULL){
         return;
     }
-    listQ2 aux = l->tail;
+    freeRec(l->tail);
     free(l);
-    freeRec(aux);
 }
 
 //libera toda la memoria que esta en uso
