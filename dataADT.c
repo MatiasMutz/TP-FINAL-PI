@@ -275,5 +275,18 @@ int query3(dataADT data){
     return OK;
 }
 
+static void freeRec(listQ2 l){
+    if(first == NULL){
+        return;
+    }
+    listQ2 aux = l->tail;
+    free(l);
+    freeRec(aux);
+}
+
 //libera toda la memoria que esta en uso
-void freeAll(dataADT data);
+void freeAll(dataADT data){
+    freeRec(data->firstQ2);
+    free(data->VQ1);
+    free(data);
+}
