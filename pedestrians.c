@@ -27,7 +27,9 @@ int main(int argc, char *argv[]){
 
     //LEER
     size_t id, people;
-    char* name, activo, day;
+    char* name;
+    char* activo
+    char* day;
     char line[MAX_LINE];
     unsigned short year, time;
 
