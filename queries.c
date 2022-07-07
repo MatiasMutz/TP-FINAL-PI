@@ -33,10 +33,6 @@ int query2(dataADT data){
         fprintf(query2,"%u;%zu\n", year, cantPerYear);
     }
     VERIFICA_PROCESADO(result);
-    if(result==NO_HAY_MAS_ELEMENTO)
-    {
-        printf("No hay mas elemntos, se requiere volver a hacer un toBegin");
-    }
     fclose(query2);
     return OK;
 }

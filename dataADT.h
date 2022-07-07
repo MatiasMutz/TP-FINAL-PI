@@ -11,11 +11,11 @@ typedef struct dataCDT * dataADT;
 
 dataADT newData();
 
-int cargarSensor(const size_t id,char* name,char activo, dataADT data);
+int cargarSensor(const size_t id,char* name,char* activo, dataADT data);
 
-void ordenarSensors(dataADT data);
+int ordenarSensors(dataADT data);
 
-int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time);
+int processLine(dataADT data,size_t id,size_t people,char* name,char* day,unsigned short year,unsigned short time);
 
 int toBegin(dataADT data);
 

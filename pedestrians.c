@@ -3,6 +3,7 @@
 #include "dataADT.h"
 #include "lectura.h"
 #include "queries.h"
+
 #define MAX_LINE 1024
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
@@ -17,6 +18,8 @@
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
 
 int main(int argc, char *argv[]){
+    enum ERRORS result = OK;
+
     if( argc != ARGS ) {
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
@@ -38,20 +41,20 @@ int main(int argc, char *argv[]){
 
     //ABRO AMBOS ARCHIVOS
     FILE *sensors = fopen(argv[1], "rt");
-    if(sensors == NULL)
+    if(sensors == NULL){
+        printf("El archivo que no fue encontrado o no existe");
         return NOT_EXIST;
+    }
     FILE *readings = fopen(argv[2], "rt");
     if(readings == NULL){
         fclose(sensors);
+        printf("El archivo que no fue encontrado o no existe");
         return NOT_EXIST;
     }
-
-    int result = OK;
-
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
         leerSensors(&id, &name, &activo, line);
-        cargarSensor (id, name, activo[0], data);
+        cargarSensor (id, name, activo, data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
     fclose(sensors);
@@ -59,22 +62,20 @@ int main(int argc, char *argv[]){
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         leerReadings(&year, &time, &id, &day, &people, line);
-        result = processLine(data, id, people, name, activo, day, year, time);
+        result = processLine(data, id, people, name, day, year, time);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
     fclose(readings);
 
-    ordenarSensors(data);
+    result = ordenarSensors(data);
+    VERIFICA_PROCESADO(result)
 
-    //SALIDA
-    enum ERRORS qResult = OK;
-
-    qResult = query1(data);
-    VERIFICA_PROCESADO(qResult)
-    qResult = query2(data);
-    VERIFICA_PROCESADO(qResult)
-    qResult = query3(data);
-    VERIFICA_PROCESADO(qResult)
+    result = query1(data);
+    VERIFICA_PROCESADO(result)
+    result = query2(data);
+    VERIFICA_PROCESADO(result)
+    result = query3(data);
+    VERIFICA_PROCESADO(result)
     freeAll(data);
     return OK; 
 }

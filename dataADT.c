@@ -96,13 +96,13 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
     return OK;
 }
 
-int cargarSensor (size_t id, char* name, char activo, dataADT data){
+int cargarSensor(size_t id, char* name, char* activo, dataADT data){
     if (data==NULL)
     {
         return NOT_PROCESSED;
     }
     enum ERRORS result = OK;
-    if(activo == 'A') {
+    if(activo[0] == 'A') {
         result = cargarActivos(id, name, data);
     }
     return result;
@@ -143,11 +143,15 @@ static int ajusteRealloc (dataADT data){
 }
 
 //Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
-void ordenarSensors(dataADT data)
+int ordenarSensors(dataADT data)
 {
-    if(data->VQ1!=NULL)
+    if(data==NULL)
+        return NOT_PROCESSED;
+    if(data->VQ1!=NULL){
         ajusteRealloc(data);
         qsort(data->VQ1, data->dimVQ1, sizeof(elemQ1), compare);
+    }
+    return OK;
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -205,7 +209,7 @@ static int diurno_O_nocturno (unsigned short time){
         return DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
 }
 
-int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
+int processLine(dataADT data,size_t id,size_t people,char* name,char* day,unsigned short year,unsigned short time)
 {
     enum ERRORS result = OK;
     result = cargarPeatonesQ1(people, id, data);
@@ -216,51 +220,8 @@ int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char
         time = diurno_O_nocturno(time);
         agregarPersdia(data, time, people, day);
     }
+    return OK;
 }
-processAllData(){
-
-}
-/*
-//Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
-int processData(const char* sensor, const char* reading, dataADT* data){
-
-errno = 0;
-int result = OK;
-*data = newData();
-if(errno == ENOMEM){
-    return ENOMEM;
-}
-//ABRO AMBOS ARCHIVOS
-FILE *sensors = fopen(sensor, "rt");
-if(sensors == NULL)
-    return NOT_EXIST;
-FILE *readings = fopen(reading, "rt");
-if(readings == NULL){
-    fclose(sensors);
-    return NOT_EXIST;
-}
-
-char line [MAX_LINE];
-size_t id;
-char* name;
-char* activo;
-
-(*data)->dimVQ1=(*data)->posNewElem;
-(*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
-
-unsigned short year, time;
-char* day;
-size_t people;
-
-
-ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
-
-//CIERRO AMBOS ARCHIVOS
-fclose(sensors);
-fclose(readings);
-return OK;
-}
-*/
 
 int toBegin(dataADT data)
 {
@@ -290,15 +251,19 @@ int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice){
     return OK;
 }
 
+static listQ2 next(listQ2 list, unsigned short* year, size_t* cantPerYear){
+    *year = list->anio;
+    *cantPerYear = list->cantP_anio;
+    return list->tail;
+}
+
 //devuelve los parametros de la q2 y pasa al siguiente elemento
 int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
     if(data == NULL)
         return NOT_PROCESSED;
-    *year = data->iterador->anio;
-    *cantPerYear = data->iterador->cantP_anio;
     if(hasNext(data))
     {
-        next(data);
+        data->iterador = next(data->iterador, year, cantPerYear);
         return OK;
     }
     else
