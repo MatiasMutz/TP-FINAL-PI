@@ -67,7 +67,8 @@ static int cargarsensores(const size_t id,char* name, dataADT data)
 { 
     if (data->posUltElem==data->dimVQ1)
     {
-        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);   
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);  
+        data->VQ1+=BLOCK; 
         for(int i=data->posUltElem;i<data->dimVQ1;i++)
         {
             data->VQ1[i].id=0;
@@ -234,6 +235,8 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         result = verificoActivo(id, name, activo[0], *data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
+    (*data)->dimVQ1=(*data)->posUltElem;
+    (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
     ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
 
     unsigned short year, time;
