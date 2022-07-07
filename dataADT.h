@@ -16,13 +16,13 @@ int cargarSensor(const size_t id,char* name,char activo, dataADT data);
 //procesa los datos de los archivos resolviendo las queries
 int processData(const char* reading, const char* sensor, dataADT* data);
 
-int query1(dataADT data);
-
 int toBegin(dataADT data);
 
-int GetQ2(dataADT data,unsigned short* year,size_t* cantP);
-
 int hasNext(dataADT data);
+
+size_t getDimQ1 (dataADT data);
+
+void q1Processed (dataADT data,char** name, size_t* cantP_sensorsm, int indice);
 
 void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear);
 

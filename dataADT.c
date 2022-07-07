@@ -263,6 +263,25 @@ static listQ2 next( listQ2 iterador,unsigned short* year,size_t* cantP){
     //????
 }
 
+size_t getDimQ1 (dataADT data){
+    return data->dimVQ1;
+}
+
+//devuelve los parametros de la q1
+void q1Processed (dataADT data,char** name, size_t* cantP_sensorsm, int indice){
+    *name = data->VQ1[indice].name;
+    *cantP_sensorsm = data->VQ1[indice].cantP_sensor;
+    return;
+}
+
+//devuelve los parametros de la q2 y pasa al siguiente elemento
+void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
+    *year = data->iterador->anio;
+    *cantPerYear = data->iterador->cantP_anio;
+    next(data);
+    return;
+}
+
 static void freeRec(listQ2 l){
     if(l == NULL){
         return;
@@ -279,12 +298,4 @@ void freeAll(dataADT data){
     }
     free(data->VQ1);
     free(data);
-}
-
-//devuelve los parametros y pasa al siguiente elemento
-void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
-    *year = data->iterador->anio;
-    *cantPerYear = data->iterador->cantP_anio;
-    next(data);
-    return;
 }
