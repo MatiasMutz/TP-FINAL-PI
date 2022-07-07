@@ -4,7 +4,12 @@
 #define MAX_LINE 1024
 #define DIURNO 0
 #define NOCTURNO 1
-
+#define NO_CARGO 0
+#define CARGO 1
+#define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
+                                                     fclose(sensors);\
+                                                     fclose(readings);\
+                                                     return result;}
 typedef struct elemQ1{
     size_t id;
     size_t cantP_sensor;
@@ -58,7 +63,7 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
-static int cargarsensores(const size_t id,const char* name, dataADT data)
+static int cargarsensores(const size_t id,char* name, dataADT data)
 { 
     if (data->posUltElem==data->dimVQ1)
     {
@@ -90,14 +95,15 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
 }
 
 //carga peatones en el sensor con el mismo id
-static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
+static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
 {
-    int i;
     i=dondeEsta(id,sensor,dim);
     if(i<dim)
     {
         sensor[i].cantP_sensor+=cantPeatones;
+        return CARGO;
     }
+    return NO_CARGO;
 }
 
 static int compare(elemQ1 elem1,elemQ1 elem2)
@@ -150,7 +156,7 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
-static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
+static void agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
     for(i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
@@ -167,10 +173,49 @@ static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t 
     }
 }
 
+static int verificoActivo (size_t id, char* name, char activo, dataADT data){
+    enum ERRORS result = OK;
+    if(activo == 'A') {
+        result = cargarsensores(id, name, data);
+    }
+    return result;
+}
+
+static void leerSensors(size_t* id, char** name, char* activo, FILE* sensors){
+    char line[MAX_LINE];
+    char* value;
+    fgets(line, MAX_LINE, sensors);
+    value = strtok(line, ";");
+    *id = strtoul(value, NULL, 10);
+    *name = strtok(NULL, ";");
+    *activo = strtok(NULL, ";");
+    return;
+}
+
+static void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, FILE* readings){
+    char line[MAX_LINE];
+    char* value;
+    value = strtok(line, ";"); //tomo el valor del anio
+    *year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
+    value = strtok(NULL, ";"); // no me importan los meses
+    value = strtok(NULL, ";"); // no me importa la fecha
+    *day = strtok(NULL, ";"); //leo el dia
+    value = strtok(NULL, ";"); //leo el id
+    *id = strtoul(value, NULL, 10); //lo paso a unisg long
+    value = strtok(NULL, ";");
+    *time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
+    value = strtok(NULL, ";"); //leo la cant personas
+    *people = strtoul(value, NULL, 10); //lo paso a unisg long
+    return;
+}
+
+
+
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
     errno = 0;
-    dataADT new = newData();
+    int result = OK;
+    *data = newData();
     if(errno == ENOMEM){
         return ENOMEM;
     }
@@ -179,55 +224,41 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     if(sensors == NULL)
         return NOT_EXIST;
     FILE *readings = fopen(reading, "rt");
-    if(readings == NULL)
+    if(readings == NULL){
+        fclose(sensors);
         return NOT_EXIST;
-    char line[MAX_LINE];
-    //LEIDA DE DATOS DE SENSORS
-    char* value;
+    }
+
     size_t id;
     char* name;
     char* activo;
-    fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
+    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
-        value = strtok(line, ";");
-        id = strtoul(value, NULL, 10);
-        name = strtok(NULL, ";");
-        activo = strtok(NULL, ";");
-        if(activo[0] == 'A'){
-            enum ERRORS result = cargarsensores(id,name,new);
-            if(result != OK){
-                return result;
-            }
-        }
+        leerSensors(&id, &name, &activo, sensors);
+        result = verificoActivo(id, name, activo[0], *data);
+        VERIFICAR_ERRORES(result, sensors, readings)
     }
+    ordenarQ1(*data->VQ1, *data->dimVQ1, compare());
 
-    //LEIDA DE DATOS DE READINGS
     unsigned short year, time;
     char* day;
     size_t people;
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
-        //Year	Month	Mdate	Day	Sensor_ID	Time	Hourly_Counts
-        value = strtok(line, ";"); //tomo el valor del anio
-        year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
-        value = strtok(NULL, ";"); // no me importan los meses
-        value = strtok(NULL, ";"); // no me importan el dia
-        day = strtok(NULL, ";"); //leo el dia
-        value = strtok(NULL, ";"); //leo el id
-        id = strtoul(value, NULL, 10); //lo paso a unisg long
-        value = strtok(NULL, ";");
-        time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
-        value = strtok(NULL, ";"); //leo la cant personas
-        people = strtoul(value, NULL, 10); //lo paso a unisg long
-        cargarPeatonesQ1(people, id, new->VQ1, new->dimVQ1);
-        addYear(new, year, people);
-        if(time<6 || time>=18){
-            time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
-        }else{
-            time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
+        leerReadings(&year, &time, &id, &day, &people, readings);
+        result = cargarPeatonesQ1(people, id, *data->VQ1, *data->dimVQ1);
+        if(result == CARGO){
+            result = addYear(*data, year, people);
+            VERIFICAR_ERRORES(result, sensors, readings)
+            if(time<6 || time>=18){
+                time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+            }else{
+                time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
+            }
+            agregarPersdia(*data->dias, time, people, day);
         }
-        agregarPersdia(new->dias, time, people, day);
     }
+
     //CIERRO AMBOS ARCHIVOS
     fclose(sensors);
     fclose(readings);
