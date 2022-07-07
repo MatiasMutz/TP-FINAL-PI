@@ -256,7 +256,6 @@ static int hasNext(const listQ2 l){
 }
 
 static listQ2 next(listQ2 l){
-     assert(hasNext(l)); //chequeo que no tendriamos que hacer en el backend, corregir
      listQ2 aux = l->iterador;
      l->iterador = l->iterador->tail;
      return aux;
