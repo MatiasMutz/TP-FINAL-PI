@@ -42,13 +42,13 @@ typedef struct dataCDT{
 //crea la estructura que almacena todos los datos utiles
 static dataADT newData(){
     dataADT new= calloc(1, sizeof(dataCDT));
-    new->dias[0].dia="lunes";
-    new->dias[1].dia="martes";
-    new->dias[2].dia="miercoles";
-    new->dias[3].dia="jueves";
-    new->dias[4].dia="viernes";
-    new->dias[5].dia="sabado";
-    new->dias[6].dia="domingo";
+    new->dias[0].dia="Monday";
+    new->dias[1].dia="Tuesday";
+    new->dias[2].dia="Wednesday";
+    new->dias[3].dia="Thursday";
+    new->dias[4].dia="Friday";
+    new->dias[5].dia="Saturday";
+    new->dias[6].dia="Sunday";
     return new;
 }
 
@@ -160,14 +160,13 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
-static void agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
+static void agregarPersdia(elemQ3* dias,const unsigned short time,const size_t cantPers,const char* dia)
 {
-    printf("HOLA\n");
     int i;
     for(i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
+    
     if (i<7)
     {
-        printf("HOLA\n");
         if (time==DIURNO)
         {
             dias[i].cantP_diurno+=cantPers;
