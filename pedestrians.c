@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dataADT.h"
+#define VERIFICA_PROCESADO if(qResult == NOT_PROCESSED) {\
+                                printf("Los datos no fueron procesados.\n");\
+                                return NOT_PROCESSED;}\
 
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
 
@@ -24,9 +27,14 @@ int main(int argc, char *argv[]){
     }
 
     //SALIDA
-    query1(data);
-    query2(data);
-    query3(data);
+    enum ERRORS qResult;
+
+    qResult = query1(data);
+    VERIFICA_PROCESADO
+    qResult = query2(data);
+    VERIFICA_PROCESADO
+    qResult = query3(data);
+    VERIFICA_PROCESADO
     freeAll(data);
     return OK; 
 }
