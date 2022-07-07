@@ -108,16 +108,18 @@ static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* se
     return NO_CARGO;
 }
 
-static int compare(elemQ1 elem1,elemQ1 elem2)
+static int compare(const void* elem1,const void* elem2)
 {
+    elemQ1 Aelem1= *(elemQ1*) elem1;
+    elemQ1 Belem2= *(elemQ1*) elem2;
     int rta;
-    if ((rta=elem2.cantP_sensor - elem1.cantP_sensor)!=0)
+    if ((rta=Belem2.cantP_sensor - Aelem1.cantP_sensor)!=0)
     {
         return rta;
     }
     else
     {
-        return strcmp(elem2.name,elem1.name);
+        return strcmp(Belem2.name,Aelem1.name);
     }
 }
 
@@ -125,7 +127,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
 static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
 {
     if (VQ1!=NULL)
-        qsort(VQ1,sizeof(VQ1[0]),dim,compare);
+        qsort(VQ1,dim,sizeof(VQ1[0]),compare);
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
