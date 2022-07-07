@@ -28,10 +28,10 @@ int main(int argc, char *argv[]){
         return ENOMEM;
     }
     //ABRO AMBOS ARCHIVOS
-    FILE *sensors = fopen(sensor, "rt");
+    FILE *sensors = fopen(argv[1], "rt");
     if(sensors == NULL)
         return NOT_EXIST;
-    FILE *readings = fopen(reading, "rt");
+    FILE *readings = fopen(argv[2], "rt");
     if(readings == NULL){
         fclose(sensors);
         return NOT_EXIST;
