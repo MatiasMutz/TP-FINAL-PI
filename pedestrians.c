@@ -23,6 +23,5 @@ int main(int argc, char *argv[]){
     query2(data);
     query3(data);
     freeAll(data);
-    return OK;
-    
+    return OK; 
 }
