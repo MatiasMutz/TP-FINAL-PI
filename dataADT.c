@@ -130,10 +130,11 @@ static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,
         qsort(VQ1,dim,sizeof(VQ1[0]),compare);
 }
 
+
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
 static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
-        listQ2 aux = malloc(sizeof(elemQ2));
+        listQ2 aux = malloc(sizeof(elemQ2));  
         if (errno==ENOMEM)
         {
             *flag=ENOMEM;
