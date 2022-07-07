@@ -3,6 +3,10 @@
 #include "dataADT.h"
 #include "lectura.h"
 #define MAX_LINE 1024
+#define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
+                                                     fclose(sensors);\
+                                                     fclose(readings);\
+                                                     return result;}
 #define VERIFICA_PROCESADO if(qResult == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
                                 return NOT_PROCESSED;}\
@@ -37,9 +41,31 @@ int main(int argc, char *argv[]){
         return NOT_EXIST;
     }
 
+    fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
+    while(fgets(line, MAX_LINE, sensors)){
+        leerSensors(&id, &name, &activo, line);
+        if(activo[0] == 'A') {
+            result = cargarsensores(id, name, data);
+        }
+        VERIFICAR_ERRORES(result, sensors, readings)
+    }
 
-    leerSensors(&id, &name, &activo, sensors, line);
-    leerReadings(&year, &time, &id, &day, &people, readings, line);
+    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
+    while(fgets(line, MAX_LINE, readings)){
+        leerReadings(&year, &time, &id, &day, &people, line);
+        result = cargarPeatonesQ1(people, id, data);
+        if(result == CARGO){
+            result = addYear(data, year, people);
+            VERIFICAR_ERRORES(result, sensors, readings)
+            if(time<6 || time>=18){
+                time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+            }else{
+                time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
+            }
+            agregarPersdia(data, time, people, day);
+        }
+    }
+
 
     /*
     enum ERRORS processResult = processData(argv[1], argv[2], &data);
