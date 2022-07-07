@@ -36,40 +36,6 @@ static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
 
-/*
-static int cargarsensoresActivosRec(size_t id,char* name, listQ1 nodo,int* flag)
-{
-    int c;
-    if (nodo==NULL || (c=strcmp(nodo->name,name))>0)
-    {
-        listQ1 new=malloc(sizeof(elemQ1));
-        if (errno==ENOMEM)
-        {
-            *flag=ENOMEM;
-        }
-        new->id=id;
-        new->name=name;
-        new->tail=nodo;
-        return new;
-    }
-    else if (c<0)
-    {
-        nodo->tail=cargarsensorActivosRec(id,name,nodo->tail,flag);
-    }
-    return nodo;
-}
-
-static int cargarsensor (size_t id,char* name,dataADT data)
-{
-    int flag=0;
-    if (data->firstQ1==NULL)
-    {
-        malloc(sizeof())
-    }
-    return flag;
-}
-*/
-
 static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
     if (data->posUltElem == data->dimVQ1)
