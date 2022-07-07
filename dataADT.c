@@ -206,16 +206,14 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
         value = strtok(NULL, ";"); //leo la cant personas
         people = strtoul(value, NULL, 10); //lo paso a unisg long
-        if(){
-            cargarPeatonesQ1(people, id, new->VQ1, new->dimVQ1);
-            addYear(new, year, people);
-            if(time<6 || time>=18){
-                time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
-            }else{
-                time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
-            }
-            agregarPersdia(new->dias, time, people, day);
+        cargarPeatonesQ1(people, id, new->VQ1, new->dimVQ1);
+        addYear(new, year, people);
+        if(time<6 || time>=18){
+            time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+        }else{
+            time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
         }
+        agregarPersdia(new->dias, time, people, day);
     }
     //CIERRO AMBOS ARCHIVOS
     fclose(sensors);
