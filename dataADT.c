@@ -238,7 +238,9 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     }
     (*data)->dimVQ1=(*data)->posUltElem;
     (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
-    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
+    int (*comp)(elemQ1 elem1,elemQ1 elem2);
+    comp=compare;
+    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, comp);
 
     unsigned short year, time;
     char* day;
