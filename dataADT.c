@@ -59,14 +59,18 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,const char* name, dataADT data)
-{
-    int posElem=dondeEsta(id,data->VQ1,data->posUltElem);
-    if(posElem==data->posUltElem+1)
+{ 
+    if (data->posUltElem==data->dimVQ1)
     {
-    if (posElem == data->dimVQ1)
-    {
-        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);        
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);   
+        for(int i=data->posUltElem;i<data->dimVQ1;i++)
+        {
+            data->VQ1[i].id=0;
+        }   
     }
+    int posElem=dondeEsta(id,data->VQ1,data->posUltElem);
+    if (posElem==data->posUltElem)
+    {
     if (errno==ENOMEM)
     {
         return ENOMEM;
@@ -76,7 +80,11 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
         data->VQ1[posElem].id=id;
         data->VQ1[posElem].name=name;
         data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
+        data->posUltElem++;
     }
+    }
+    else{
+        errno=0;
     }
      return OK;
 }
@@ -109,7 +117,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
 static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
 {
     if (VQ1!=NULL)
-        qsort(VQ1,sizeof(VQ1[0]),dim,compare);
+    qsort(VQ1,sizeof(VQ1[0]),dim,compare);
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -293,4 +301,4 @@ void freeAll(dataADT data){
     freeRec(data->firstQ2);
     free(data->VQ1);
     free(data);
-}
+} 
