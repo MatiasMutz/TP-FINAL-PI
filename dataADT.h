@@ -21,9 +21,7 @@ int query1(dataADT data);
 
 
 int GetQ2(dataADT data,unsigned short* year,size_t* cantP);
-
-
-
+data->dias
 
 //libera la memoria
 void freeAll(dataADT data);

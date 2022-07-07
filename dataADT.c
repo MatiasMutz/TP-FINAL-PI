@@ -60,7 +60,7 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
     return i;
 }
 
- int cargarSensor (size_t id, char* name, char activo, dataADT data){
+int cargarSensor (size_t id, char* name, char activo, dataADT data){
     if (data==NULL)
     {
         return DATA_NO_INICIALIZADA;
@@ -81,7 +81,6 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
     {
         return DATA_NO_INICIALIZADA;
     }
-
     if (data->posNewElem==data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
@@ -114,12 +113,12 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
 }
 
 //carga peatones en el sensor con el mismo id
-static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
+static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id, dataADT data)
 {
-    int i=dondeEsta(id,sensor,dim);
-    if(i<dim)
+    int i=dondeEsta(id,data->VQ1,data->dimVQ1);
+    if(i<data->dimVQ1)
     {
-        sensor[i].cantP_sensor+=cantPeatones;
+        data->VQ1[i].cantP_sensor+=cantPeatones;
         return CARGO;
     }
     return NO_CARGO;
@@ -177,25 +176,23 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
-static void agregarPersdia(elemQ3* dias,const unsigned short time,const size_t cantPers,const char* dia)
+static void agregarPersdia(dataADT data,const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
-    for(i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
+    for(i=0;i<7 && strcmp(data->dias[i].dia,dia)!=0;i++);
     
     if (i<7)
     {
         if (time==DIURNO)
         {
-            dias[i].cantP_diurno+=cantPers;
+            data->dias[i].cantP_diurno+=cantPers;
         }
         else if(time==NOCTURNO)
         {
-            dias[i].cantP_nocturno+=cantPers;
+            data->dias[i].cantP_nocturno+=cantPers;
         }
     }
 }
-
-
 
 int processData2(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
 {
@@ -274,16 +271,16 @@ int ToBegin(dataADT data)
     return OK;
 }
 
- static int hasNext(const listQ2 iterador){
+static int hasNext(const listQ2 iterador){
     return iterador!=NULL && iterador->tail != NULL;
 }
 
- static void listQ2 Next( listQ2 iterador,unsigned short* year,size_t* cantP){
+static listQ2 Next( listQ2 iterador,unsigned short* year,size_t* cantP){
     if (hasNext(iterador))
     {
-        *year=iterador->anio
+        *year=iterador->anio;
     }
-    
+    //????
 }
 
 static void freeRec(listQ2 l){
