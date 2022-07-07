@@ -29,6 +29,7 @@ typedef struct elemQ3{
 typedef struct dataCDT{
     elemQ1* VQ1;
     size_t dimVQ1;
+    size_t posUltElem;
     listQ2 firstQ2;
     elemQ3 dias[7];
 }dataCDT;
@@ -46,11 +47,11 @@ static dataADT newData(){
     return new;
 }
 
-//devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector
-static int dondeEsta(const size_t id,elemQ1* sensor,const size_t dim)
+//devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector, en dim tiene que estar la poscion del ultimo elemento para cargar los sensores
+static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 {
     int i;
-    for(i=0;i<dim && sensor[i].id!=id;i++);
+    for(i=0;i<=posUltElem && sensor[i].id!=id;i++);
     return i;
 }
 
@@ -59,8 +60,10 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t dim)
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
-    int posUltElem=dondeEsta(id,data->VQ1,data->dimVQ1);
-    if (posUltElem == data->dimVQ1)
+    int posElem=dondeEsta(id,data->VQ1,data->posUltElem);
+    if(posElem==data->posUltElem+1)
+    {
+    if (posElem == data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);        
     }
@@ -70,22 +73,22 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
     else
     {
-        data->VQ1[posUltElem].id=id;
-        strcpy(data->VQ1[posUltElem].name, name);
-        //data->VQ1[posUltElem].name=name;
-        data->VQ1[posUltElem].cantP_sensor=0;
-        return OK;
+        data->VQ1[posElem].id=id;
+        data->VQ1[posElem].name=name;
+        data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
     }
+    }
+     return OK;
 }
 
 //carga peatones en el sensor con el mismo id
 static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
 {
     int i;
-    for(i=0;i<dim && id!=sensor[i].id;i++);
+    i=dondeEsta(id,sensor,dim);
     if(i<dim)
     {
-        sensor[i].cantP_sensor+=cantPeatones;
+            sensor[i].cantP_sensor+=cantPeatones;
     }
 }
 
@@ -94,7 +97,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
     int rta;
     if ((rta=elem2.cantP_sensor - elem1.cantP_sensor)!=0)
     {
-        return rta;
+            return rta;
     }
     else
     {
@@ -138,6 +141,7 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     data->firstQ2=addYearRec(data->firstQ2,year,cantPers,&flag);
     return flag;
 }
+
 
 static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
