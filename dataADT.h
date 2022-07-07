@@ -13,8 +13,9 @@ dataADT newData();
 
 int cargarSensor(const size_t id,char* name,char activo, dataADT data);
 
-//procesa los datos de los archivos resolviendo las queries
-//int processData(const char* reading, const char* sensor, dataADT* data);
+void ordenarSensors(dataADT data, int (* compare)(const void* elem1,const void* elem2));
+
+int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time);
 
 int toBegin(dataADT data);
 
@@ -22,9 +23,9 @@ int hasNext(dataADT data);
 
 size_t getDimQ1 (dataADT data);
 
-void q1Processed (dataADT data,char** name, size_t* cantP_sensorsm, int indice);
+void q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice);
 
-void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear);
+int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear);
 
 void q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice);
 

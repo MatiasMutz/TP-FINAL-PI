@@ -4,13 +4,14 @@
 #include "lectura.h"
 #include "queries.h"
 #define MAX_LINE 1024
+
+#define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
+                                printf("Los datos no fueron procesados.\n");\
+                                return NOT_PROCESSED;}
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
                                                      fclose(readings);\
                                                      return result;}
-#define VERIFICA_PROCESADO if(qResult == NOT_PROCESSED) {\
-                                printf("Los datos no fueron procesados.\n");\
-                                return NOT_PROCESSED;}\
 
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
 
@@ -49,49 +50,30 @@ int main(int argc, char *argv[]){
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
         leerSensors(&id, &name, &activo, line);
-        if(activo[0] == 'A') {
-            result = cargarsensores(id, name, data);
-        }
+        cargarSensor (id, name, activo[0], data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
-    ordenarSensors(data);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         leerReadings(&year, &time, &id, &day, &people, line);
-        result = cargarPeatonesQ1(people, id, data);
-        if(result == CARGO){
-            result = addYear(data, year, people);
-            VERIFICAR_ERRORES(result, sensors, readings)
-            if(time<6 || time>=18){
-                time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
-            }else{
-                time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
-            }
-            agregarPersdia(data, time, people, day);
-        }
+        result = processLine(data, id, people, name, activo, day, year, time);
+        VERIFICAR_ERRORES(result, sensors, readings)
     }
 
-    /*
-    enum ERRORS processResult = processData(argv[1], argv[2], &data);
-    if(processResult == NOT_EXIST) {
-        printf("El archivo pasado por parametro no existe o no fue encontrado.\n");
-        return NO_MEMORY;
-    }
-    else if(processResult == NO_MEMORY){
-        printf("No hay espacio disponible para guardar datos.\n");
-        return NO_MEMORY;
-    }
-     */
+    processAllData(data);
+
+    ordenarSensors(data);
+
     //SALIDA
-    enum ERRORS qResult;
+    enum ERRORS qResult = OK;
 
     qResult = query1(data);
-    VERIFICA_PROCESADO
+    VERIFICA_PROCESADO(qResult)
     qResult = query2(data);
-    VERIFICA_PROCESADO
+    VERIFICA_PROCESADO(qResult)
     qResult = query3(data);
-    VERIFICA_PROCESADO
+    VERIFICA_PROCESADO(qResult)
     freeAll(data);
     return OK; 
 }

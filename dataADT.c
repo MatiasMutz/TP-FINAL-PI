@@ -6,10 +6,7 @@
 #define NOCTURNO 1
 #define NO_CARGO 0
 #define CARGO 1
-#define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
-                                                     fclose(sensors);\
-                                                     fclose(readings);\
-                                                     return result;}
+
 typedef struct elemQ1{
     size_t id;
     size_t cantP_sensor;
@@ -60,18 +57,6 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
     return i;
 }
 
-int cargarSensor (size_t id, char* name, char activo, dataADT data){
-    if (data==NULL)
-    {
-        return DATA_NO_INICIALIZADA;
-    }
-    enum ERRORS result = OK;
-    if(activo == 'A') {
-        result = cargarActivos(id, name, data);
-    }
-    return result;
-}
-
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
@@ -84,32 +69,44 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
     if (data->posNewElem==data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
-        data->dimVQ1+=BLOCK; 
+        data->dimVQ1+=BLOCK;
         for(int i=data->posNewElem;i<data->dimVQ1;i++)
         {
             data->VQ1[i].id=0;
-        }   
+        }
     }
     int posElem=dondeEsta(id,data->VQ1,data->posNewElem);
     if (posElem==data->posNewElem)
     {
-    if (errno==ENOMEM)
-    {
-        return ENOMEM;
-    }
-    else
-    {
-        data->VQ1[posElem].id=id;
-        data->VQ1[posElem].name = malloc(strlen(name)+1);
-        strcpy(data->VQ1[posElem].name, name);
-        data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
-        data->posNewElem++;
-    }
+        if (errno==ENOMEM)
+        {
+            return ENOMEM;
+        }
+        else
+        {
+            data->VQ1[posElem].id=id;
+            data->VQ1[posElem].name = malloc(strlen(name)+1);
+            strcpy(data->VQ1[posElem].name, name);
+            data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
+            data->posNewElem++;
+        }
     }
     else{
         errno=0;
     }
-     return OK;
+    return OK;
+}
+
+int cargarSensor (size_t id, char* name, char activo, dataADT data){
+    if (data==NULL)
+    {
+        return DATA_NO_INICIALIZADA;
+    }
+    enum ERRORS result = OK;
+    if(activo == 'A') {
+        result = cargarActivos(id, name, data);
+    }
+    return result;
 }
 
 //carga peatones en el sensor con el mismo id
@@ -140,10 +137,16 @@ static int compare(const void* elem1,const void* elem2)
 }
 
 //Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
-static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(const void* elem1,const void* elem2))
+void ordenarSensors(dataADT data, int (* compare)(const void* elem1,const void* elem2))
 {
-    if (VQ1!=NULL)
-        qsort(VQ1,dim,sizeof(elemQ1),compare);
+    if(data->VQ1!=NULL)
+        qsort(data->VQ1, data->dimVQ1, sizeof(elemQ1), compare);
+}
+
+int ajusteRealloc (dataADT data){
+    data->dimVQ1=data->posNewElem;
+    data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*data->dimVQ1);
+    return OK;
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -194,11 +197,28 @@ static void agregarPersdia(dataADT data,const unsigned short time,const size_t c
     }
 }
 
-int processData2(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
-{
-
+static int diurno_O_nocturno (unsigned short time){
+    if(time<6 || time>=18)
+        return NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+    else
+        return DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
 }
 
+int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
+{
+    enum ERRORS result = 0K;
+    result = cargarPeatonesQ1(people, id, data);
+    if(result == CARGO){
+        result = addYear(data, year, people);
+        if(result != OK)
+            return result;
+        time = diurno_O_nocturno(time);
+        agregarPersdia(data, time, people, day);
+    }
+}
+processAllData(){
+
+}
 /*
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
@@ -271,27 +291,33 @@ size_t getDimQ1 (dataADT data){
 }
 
 //devuelve los parametros de la q1
-void q1Processed (dataADT data,char** name, size_t* cantP_sensorsm, int indice){
+int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice){
+    if(data == NULL)
+        return NOT_PROCESSED;
     *name = data->VQ1[indice].name;
-    *cantP_sensorsm = data->VQ1[indice].cantP_sensor;
-    return;
+    *cantP_sensors = data->VQ1[indice].cantP_sensor;
+    return OK;
 }
 
 //devuelve los parametros de la q2 y pasa al siguiente elemento
-void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
+int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
+    if(data == NULL)
+        return NOT_PROCESSED;
     *year = data->iterador->anio;
     *cantPerYear = data->iterador->cantP_anio;
     next(data);
-    return;
+    return OK;
 }
 
 //devuelve los parametros de la q3 y pasa al siguiente elemento
-void q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice){
+int q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice){
+    if(data == NULL)
+        return NOT_PROCESSED;
     *dia = data->dias[indice].dia;
     *cantP_diurno = data->dias[indice].cantP_diurno;
     *cantP_nocturno = data->dias[indice].cantP_nocturno;
     *suma = data->dias[indice].cantP_diurno + data->dias[indice].cantP_nocturno;
-    return;
+    return OK;
 }
 
 static void freeRec(listQ2 l){
