@@ -10,7 +10,7 @@ typedef struct elemQ1{
 }elemQ1;
 
 typedef struct elemQ2{
-    unsigned int anio;
+    unsigned short anio;
     size_t cantP_anio;
     struct elemQ2* tail;
     struct elemQ2* iterador;
@@ -82,7 +82,6 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
     else
     {
-    
         data->VQ1[data->posUltElem].id=id;
         data->VQ1[data->posUltElem].name=name;
         data->VQ1[data->posUltElem].cantP_sensor=0;
@@ -119,7 +118,7 @@ static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,
     qsort(VQ1,sizeof(VQ1[0]),dim,compare);
 }
 
-static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,int* flag){
+static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
         listQ2 aux = malloc(sizeof(elemQ2));
         if (errno==ENOMEM)
@@ -141,7 +140,7 @@ static listQ2 addYearRec(listQ2 l,const unsigned int year,const size_t cantPers,
     return l;
 }
 
-static int addYear (dataADT data,const unsigned int year,const size_t cantPers)
+static int addYear (dataADT data,const unsigned short year,const size_t cantPers)
 {
     int flag=0;
     data->firstQ2=addYearRec(data->firstQ2,year,cantPers,&flag);
@@ -154,31 +153,56 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     if(errno == ENOMEM){
         return ENOMEM;
     }
+    //ABRO AMBOS ARCHIVOS
     FILE *sensors = fopen(sensor, "rt");
-    char line[MAX_LINE];
-    char* value;
-    char* name;
-    char* activo;
-    size_t id;
-    fgets(line, MAX_LINE, sensors);
     if(sensors == NULL)
         return NOT_EXIST;
-    while(fgets(line, MAX_LINE, sensors)){
-        value = strtok(line, ";");
-        id = strtoul(value, NULL, 10);
-        printf("%zu\t", id);
-        name = strtok(NULL, ";");
-        printf("%s\t\t", name);
-        activo = strtok(NULL, ";");
-        printf("%s", activo);
-        //llamar a funcion que se encarga de usarlos
-    }
     FILE *readings = fopen(reading, "rt");
     if(readings == NULL)
         return NOT_EXIST;
+    char line[MAX_LINE];
+    //LEIDA DE DATOS DE SENSORS
+    char* value;
+    size_t id;
+    char* name;
+    char* activo;
+    fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
+    while(fgets(line, MAX_LINE, sensors)){
+        value = strtok(line, ";");
+        id = strtoul(value, NULL, 10);
+        name = strtok(NULL, ";");
+        activo = strtok(NULL, ";");
+        //llamar a funcion que se encarga de usarlos
+    }
+    //LEIDA DE DATOS DE READINGS
+    unsigned short year;
+    char* day;
+    unsigned short time;
+    size_t people;
+    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
+    while(fgets(line, MAX_LINE, readings)){
+        //Year	Month	Mdate	Day	Sensor_ID	Time	Hourly_Counts
+        value = strtok(line, ";"); //tomo el valor del anio
+        year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
+        value = strtok(NULL, ";"); // no me importan los meses
+        value = strtok(NULL, ";"); // no me importan el dia
+        day = strtok(NULL, ";"); //leo el dia
+        value = strtok(NULL, ";"); //leo el id
+        id = strtoul(value, NULL, 10); //lo paso a unisg long
+        value = strtok(NULL, ";");
+        time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
+        value = strtok(NULL, ";"); //leo la cant personas
+        people = strtoul(value, NULL, 10); //lo paso a unisg long
+        if(time<6 || time>=18){
+            //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+        }else{
+            //fue diurno. Mandar a la funcion que lo procese como diurno.
+        }
+    }
+    //CIERRO AMBOS ARCHIVOS
     fclose(sensors);
     fclose(readings);
-    free(new);
+    free(new); //este free no se deberia hacer aca, esta aca para que no tire el sanitaze. Una vez hecho el freeAll lo sacamos.
     return OK;
 }
 
