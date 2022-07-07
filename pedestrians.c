@@ -20,8 +20,9 @@ int main(int argc, char *argv[]){
         return NO_MEMORY;
     }
     query1(data);
-    //query2(data);
-    //query3(data);
+    query2(data);
+    query3(data);
     freeAll(data);
     return OK;
+    
 }
