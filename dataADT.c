@@ -285,6 +285,15 @@ void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
     return;
 }
 
+//devuelve los parametros de la q3 y pasa al siguiente elemento
+void q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice){
+    *dia = data->dias[indice].dia;
+    *cantP_diurno = data->dias[indice].cantP_diurno;
+    *cantP_nocturno = data->dias[indice].cantP_nocturno;
+    *suma = data->dias[indice].cantP_diurno + data->dias[indice].cantP_nocturno;
+    return;
+}
+
 static void freeRec(listQ2 l){
     if(l == NULL){
         return;
