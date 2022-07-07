@@ -27,7 +27,6 @@ typedef struct elemQ3{
 typedef struct dataCDT{
     elemQ1* VQ1;
     size_t dimVQ1;
-    size_t posUltElem;
     listQ2 firstQ2;
     elemQ3 dias[7];
 }dataCDT;
@@ -37,11 +36,20 @@ static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
 
+//devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector
+static int dondeEsta(const size_t id,elemQ1* sensor,const size_t dim)
+{
+    int i;
+    for(i=0;i<dim && sensor[i].id!=id;i++);
+    return i;
+}
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
+//consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
-    if (data->posUltElem == data->dimVQ1)
+    int posUltElem=dondeEsta(id,data->VQ1,data->dimVQ1);
+    if (posUltElem == data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);        
     }
@@ -51,10 +59,9 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
     else
     {
-        data->VQ1[data->posUltElem].id=id;
-        data->VQ1[data->posUltElem].name=name;
-        data->VQ1[data->posUltElem].cantP_sensor=0;
-        data->posUltElem++;
+        data->VQ1[posUltElem].id=id;
+        data->VQ1[posUltElem].name=name;
+        data->VQ1[posUltElem].cantP_sensor=0;
         return OK;
     }
 }
