@@ -199,7 +199,6 @@ int processData2(dataADT data,size_t id,size_t people,char* name,char activo,cha
 
 }
 
-
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
     errno = 0;
@@ -239,7 +238,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return OK;
 }
 
-int ToBegin(dataADT data)
+int toBegin(dataADT data)
 {
     if (data==NULL)
     {
@@ -249,11 +248,11 @@ int ToBegin(dataADT data)
     return OK;
 }
 
-static int hasNext(const listQ2 iterador){
-    return iterador!=NULL && iterador->tail != NULL;
+static int hasNext(dataADT data){
+    return data->iterador!=NULL && data->iterador->tail!=NULL;
 }
 
-static listQ2 Next( listQ2 iterador,unsigned short* year,size_t* cantP){
+static listQ2 next( listQ2 iterador,unsigned short* year,size_t* cantP){
     if (hasNext(iterador))
     {
         *year=iterador->anio;
@@ -277,4 +276,12 @@ void freeAll(dataADT data){
     }
     free(data->VQ1);
     free(data);
+}
+
+//devuelve los parametros y pasa al siguiente elemento
+void q2Processed (dataADT data, usigned short* year, size_t* cantPerYear){
+    *year = data->iterador->anio;
+    *cantPerYear = data->iterador->cantP_anio;
+    next(data);
+    return;
 }
