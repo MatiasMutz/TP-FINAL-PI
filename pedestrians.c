@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "dataADT.h"
 #include "lectura.h"
+#include "queries.h"
 #define MAX_LINE 1024
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
@@ -53,6 +54,7 @@ int main(int argc, char *argv[]){
         }
         VERIFICAR_ERRORES(result, sensors, readings)
     }
+    ordenarSensors(data);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
