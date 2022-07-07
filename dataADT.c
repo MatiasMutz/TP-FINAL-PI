@@ -112,29 +112,28 @@ static int compare(const void* elem1,const void* elem2)
 {
     elemQ1 Aelem1= *(elemQ1*) elem1;
     elemQ1 Belem2= *(elemQ1*) elem2;
-    int rta;
-    if ((rta=Belem2.cantP_sensor - Aelem1.cantP_sensor)!=0)
+    int rta = Belem2.cantP_sensor - Aelem1.cantP_sensor;
+    if (rta!=0)
     {
         return rta;
     }
     else
     {
-        return strcmp(Belem2.name,Aelem1.name);
+        return strcmp(Aelem1.name,Belem2.name);
     }
 }
 
 //Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
-static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
+static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(const void* elem1,const void* elem2))
 {
     if (VQ1!=NULL)
-        qsort(VQ1,dim,sizeof(VQ1[0]),compare);
+        qsort(VQ1,dim,sizeof(elemQ1),compare);
 }
-
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
 static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
-        listQ2 aux = malloc(sizeof(elemQ2));  
+        listQ2 aux = malloc(sizeof(elemQ2));
         if (errno==ENOMEM)
         {
             *flag=ENOMEM;
@@ -241,9 +240,6 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     }
     (*data)->dimVQ1=(*data)->posUltElem;
     (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
-    int (*comp)(elemQ1 elem1,elemQ1 elem2);
-    comp=compare;
-    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, comp);
 
     unsigned short year, time;
     char* day;
@@ -264,6 +260,8 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         }
     }
 
+    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
+
     //CIERRO AMBOS ARCHIVOS
     fclose(sensors);
     fclose(readings);
@@ -277,10 +275,6 @@ int query1(dataADT data){
     }
     FILE* query1 = fopen("query1.csv", "wt");
     fprintf(query1, "sensor;counts\n");
-    printf("dim se sensores: %ld\n", data->dimVQ1);
-    printf("dim se sensores: %ld\n", data->posUltElem);
-    printf("nombre sensores: %s\n", data->VQ1[0].name);
-    printf("person sensores: %ld\n", data->VQ1[0].cantP_sensor);
     for (int i = 0; i < data->dimVQ1; i++) {
         fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
     }
