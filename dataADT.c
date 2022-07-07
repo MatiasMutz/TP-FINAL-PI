@@ -181,7 +181,7 @@ static int verificoActivo (size_t id, char* name, char activo, dataADT data){
     return result;
 }
 
-static void leerSensors(size_t* id, char** name, char* activo, FILE* sensors, char line [MAX_LINE]){
+static void leerSensors(size_t* id, char** name, char** activo, FILE* sensors, char line [MAX_LINE]){
     char* value;
     value = strtok(line, ";");
     *id = strtoul(value, NULL, 10);
@@ -266,8 +266,11 @@ int query1(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
     }
-    FILE* query1 = fopen("query1.csv", "w");
+    FILE* query1 = fopen("query1.csv", "wt");
     fprintf(query1, "sensor;counts\n");
+    printf("dim se sensores: %ld\n", data->dimVQ1);
+    printf("dim se sensores: %ld\n", data->posUltElem);
+    printf("dim se sensores: %ld\n", data->VQ1[0].cantP_sensor);
     for (int i = 0; i < data->dimVQ1; ++i) {
         fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
     }
@@ -290,7 +293,7 @@ int query2(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
     }
-    FILE *query2 = fopen("query2.csv", "w");
+    FILE *query2 = fopen("query2.csv", "wt");
     fprintf(query2, "year;counts\n");
     data->firstQ2->iterador = data->firstQ2;
     while(hasNext(data->firstQ2->iterador)){
@@ -306,7 +309,7 @@ int query3(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
     }
-    FILE *query3 = fopen("query3.csv", "w");
+    FILE *query3 = fopen("query3.csv", "wt");
     fprintf(query3, "day;day_counts;night_counts;total_counts\n");
     for (int i = 0; i < 7; ++i) {
         fprintf(query3,"%s;%zu;%zu;%zu\n", data->dias[i].dia, data->dias[i].cantP_diurno, data->dias[i].cantP_nocturno, (data->dias[i].cantP_diurno+data->dias[i].cantP_nocturno) );
