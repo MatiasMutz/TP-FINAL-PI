@@ -1,7 +1,6 @@
 #include "dataADT.h"
 
 #define BLOCK 20
-#define MAX_LINE 1024
 #define DIURNO 0
 #define NOCTURNO 1
 #define NO_CARGO 0
@@ -189,21 +188,6 @@ static int verificoActivo (size_t id, char* name, char activo, dataADT data){
 
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
-    errno = 0;
-    int result = OK;
-    *data = newData();
-    if(errno == ENOMEM){
-        return ENOMEM;
-    }
-    //ABRO AMBOS ARCHIVOS
-    FILE *sensors = fopen(sensor, "rt");
-    if(sensors == NULL)
-        return NOT_EXIST;
-    FILE *readings = fopen(reading, "rt");
-    if(readings == NULL){
-        fclose(sensors);
-        return NOT_EXIST;
-    }
 
     char line [MAX_LINE];
     size_t id;
