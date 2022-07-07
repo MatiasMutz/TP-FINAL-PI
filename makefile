@@ -4,7 +4,7 @@ DEBUG_COMPILER = -g -DDEBUG=1
 
 OUTPUT_FILE = pedestrians
 FILES = pedestrians.c dataADT.c lectura.c queries.c
-FLAGS = -std=c99 -pedantic -Wall -fsanitize=address
+FLAGS = -std=c99 -pedantic -Wall -fsanitize=address -g
 
 all:
 	$(COMPILER) -o $(OUTPUT_FILE) $(FILES) $(FLAGS)

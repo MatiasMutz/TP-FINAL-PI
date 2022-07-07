@@ -225,36 +225,14 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     size_t id;
     char* name;
     char* activo;
-    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
-    while(fgets(line, MAX_LINE, sensors)){
-        leerSensors(&id, &name, &activo, sensors, line);
-        result = verificoActivo(id, name, activo[0], *data);
-        VERIFICAR_ERRORES(result, sensors, readings)
-    }
+
     (*data)->dimVQ1=(*data)->posNewElem;
     (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
 
     unsigned short year, time;
     char* day;
     size_t people;
-    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
-    while(fgets(line, MAX_LINE, readings)){
-        leerReadings(&year, &time, &id, &day, &people, readings, line);
-                
 
-        result = cargarPeatonesQ1(people, id, (*data)->VQ1, (*data)->dimVQ1);
-        if(result == CARGO){
-            result = addYear(*data, year, people);
-            VERIFICAR_ERRORES(result, sensors, readings)
-            if(time<6 || time>=18){
-                time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
-            }else{
-                time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
-            }
-            
-            agregarPersdia((*data)->dias, time, people, day);
-        }
-    }
 
     ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
 
