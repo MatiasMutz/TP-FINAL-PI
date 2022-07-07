@@ -188,7 +188,7 @@ int query1(dataADT data){
     FILE* query1 = fopen("query1.csv", "w");
     fprintf(query1, "sensor;counts\n");
     for (int i = 0; i < data->dimVQ1; ++i) {
-        fprintf(query1, data->VQ1[i].name + ";" + data->VQ1[i].cantP_sensor + '\n');
+        fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
     }
     fclose(query1);
     return OK;
@@ -203,7 +203,7 @@ int query2(dataADT data){
     fprintf(query2, "year;counts\n");
     data->firstQ2->iterador = data->firstQ2;
     while(hasNext(data->firstQ2->iterador)){
-        fprintf(query2, data->firstQ2->iterador->anio + ";" + data->firstQ2->iterador->cantP_anio + "\n");
+        fprintf(query2,"%u;\n", data->firstQ2->iterador->anio, data->firstQ2->iterador->cantP_anio);
     }
     fclose(query2);
     return OK;
