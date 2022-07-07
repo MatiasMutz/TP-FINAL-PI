@@ -64,10 +64,10 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,char* name, dataADT data)
-{ 
+{
     if (data->posUltElem==data->dimVQ1)
     {
-        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);  
+        data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
         data->dimVQ1+=BLOCK; 
         for(int i=data->posUltElem;i<data->dimVQ1;i++)
         {
@@ -84,7 +84,8 @@ static int cargarsensores(const size_t id,char* name, dataADT data)
     else
     {
         data->VQ1[posElem].id=id;
-        data->VQ1[posElem].name=name;
+        data->VQ1[posElem].name = malloc(strlen(name)+1);
+        strcpy(data->VQ1[posElem].name, name);
         data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
         data->posUltElem++;
     }
@@ -124,7 +125,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
 static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
 {
     if (VQ1!=NULL)
-    qsort(VQ1,sizeof(VQ1[0]),dim,compare);
+        qsort(VQ1,sizeof(VQ1[0]),dim,compare);
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -273,8 +274,9 @@ int query1(dataADT data){
     fprintf(query1, "sensor;counts\n");
     printf("dim se sensores: %ld\n", data->dimVQ1);
     printf("dim se sensores: %ld\n", data->posUltElem);
-    printf("dim se sensores: %ld\n", data->VQ1[0].cantP_sensor);
-    for (int i = 0; i < data->dimVQ1; ++i) {
+    printf("nombre sensores: %s\n", data->VQ1[0].name);
+    printf("person sensores: %ld\n", data->VQ1[0].cantP_sensor);
+    for (int i = 0; i < data->dimVQ1; i++) {
         fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
     }
     fclose(query1);
@@ -333,6 +335,9 @@ static void freeRec(listQ2 l){
 //libera toda la memoria que esta en uso
 void freeAll(dataADT data){
     freeRec(data->firstQ2);
+    for (int i = 0; i < data->dimVQ1; ++i) {
+        free(data->VQ1[i].name);
+    }
     free(data->VQ1);
     free(data);
 } 
