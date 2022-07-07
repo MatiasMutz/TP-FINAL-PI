@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dataADT.h"
-#include"lectura.h"
+#include "lectura.h"
 #define MAX_LINE 1024
 #define VERIFICA_PROCESADO if(qResult == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
@@ -40,6 +40,7 @@ int main(int argc, char *argv[]){
     leerSensors(&id, &name, &activo, sensors, line);
     leerReadings(&year, &time, &id, &day, &people, readings, line);
 
+    /*
     enum ERRORS processResult = processData(argv[1], argv[2], &data);
     if(processResult == NOT_EXIST) {
         printf("El archivo pasado por parametro no existe o no fue encontrado.\n");
@@ -49,10 +50,7 @@ int main(int argc, char *argv[]){
         printf("No hay espacio disponible para guardar datos.\n");
         return NO_MEMORY;
     }
-
-
-
-
+     */
     //SALIDA
     enum ERRORS qResult;
 
