@@ -20,7 +20,6 @@ typedef struct elemQ2{
     unsigned short anio;
     size_t cantP_anio;
     struct elemQ2* tail;
-    struct elemQ2* iterador;
 }elemQ2;
 
 typedef elemQ2* listQ2;
@@ -34,8 +33,9 @@ typedef struct elemQ3{
 typedef struct dataCDT{
     elemQ1* VQ1;
     size_t dimVQ1;
-    size_t posUltElem;
+    size_t posNewElem;
     listQ2 firstQ2;
+    listQ2 iterador;
     elemQ3 dias[7];
 }dataCDT;
 
@@ -53,10 +53,10 @@ static dataADT newData(){
 }
 
 //devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector, en dim tiene que estar la poscion del ultimo elemento para cargar los sensores
-static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
+static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
 {
     size_t i;
-    for(i=0;i<posUltElem && sensor[i].id!=id;i++);
+    for(i=0;i<posNewElem && sensor[i].id!=id;i++);
     return i;
 }
 
@@ -65,17 +65,17 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,char* name, dataADT data)
 {
-    if (data->posUltElem==data->dimVQ1)
+    if (data->posNewElem==data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
         data->dimVQ1+=BLOCK; 
-        for(int i=data->posUltElem;i<data->dimVQ1;i++)
+        for(int i=data->posNewElem;i<data->dimVQ1;i++)
         {
             data->VQ1[i].id=0;
         }   
     }
-    int posElem=dondeEsta(id,data->VQ1,data->posUltElem);
-    if (posElem==data->posUltElem)
+    int posElem=dondeEsta(id,data->VQ1,data->posNewElem);
+    if (posElem==data->posNewElem)
     {
     if (errno==ENOMEM)
     {
@@ -87,7 +87,7 @@ static int cargarsensores(const size_t id,char* name, dataADT data)
         data->VQ1[posElem].name = malloc(strlen(name)+1);
         strcpy(data->VQ1[posElem].name, name);
         data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
-        data->posUltElem++;
+        data->posNewElem++;
     }
     }
     else{
@@ -238,7 +238,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         result = verificoActivo(id, name, activo[0], *data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
-    (*data)->dimVQ1=(*data)->posUltElem;
+    (*data)->dimVQ1=(*data)->posNewElem;
     (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
 
     unsigned short year, time;
@@ -282,14 +282,13 @@ int query1(dataADT data){
     return OK;
 }
 
-static int hasNext(const listQ2 l){
-    return l->iterador != NULL;
+
+static int hasNext(const listQ2 iterador){
+    return iterador!=NULL && iterador->tail != NULL;
 }
 
-static listQ2 next(listQ2 l){
-    listQ2 aux = l->iterador;
-    l->iterador = l->iterador->tail;
-    return aux;
+static listQ2 next(listQ2 iterador){
+    return iterador->tail;
 }
 
 //Carga los datos del query 2 en el archivo csv
@@ -299,10 +298,10 @@ int query2(dataADT data){
     }
     FILE *query2 = fopen("query2.csv", "wt");
     fprintf(query2, "year;counts\n");
-    data->firstQ2->iterador = data->firstQ2;
-    while(hasNext(data->firstQ2->iterador)){
-        fprintf(query2,"%u;%zu\n", data->firstQ2->iterador->anio, data->firstQ2->iterador->cantP_anio);
-        data->firstQ2->iterador = next(data->firstQ2->iterador);
+    data->iterador = data->firstQ2;
+    while(hasNext(data->iterador)){
+        fprintf(query2,"%u;%zu\n", data->iterador->anio, data->iterador->cantP_anio);
+        data->iterador = next(data->iterador);
     }
     fclose(query2);
     return OK;
