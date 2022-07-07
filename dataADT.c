@@ -257,7 +257,18 @@ static listQ2 next(listQ2 l){
 }
 
 //Carga los datos del query 3 en el archivo csv
-int query3(dataADT data);
+int query3(dataADT data){
+    if(data == NULL){
+        return NOT_PROCESSED;
+    }
+    FILE *query3 = fopen("query3.csv", "w");
+    fprintf(query1, "day;day_counts;night_counts;total_counts\n");
+    for (int i = 0; i < 7; ++i) {
+        fprintf(query3,"%s;%zu;%zu;%zu\n", data->dias[i].dia, data->dias[i].cantP_diurno, data->dias[i].cantP_nocturno, (data->dias[i].cantP_diurno+data->dias[i].cantP_nocturno) );
+    }
+    fclose(query3);
+    return OK;
+}
 
 //libera toda la memoria que esta en uso
 void freeAll(dataADT data);
