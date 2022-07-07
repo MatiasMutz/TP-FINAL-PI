@@ -182,6 +182,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         id = strtoul(value, NULL, 10);
         name = strtok(NULL, ";");
         activo = strtok(NULL, ";");
+        //cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
         //llamar a funcion que se encarga de usarlos
     }
     //LEIDA DE DATOS DE READINGS
@@ -203,6 +204,8 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
         value = strtok(NULL, ";"); //leo la cant personas
         people = strtoul(value, NULL, 10); //lo paso a unisg long
+        //addYear (dataADT data,const unsigned short year,const size_t cantPers)
+        //agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
         if(time<6 || time>=18){
             time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
         }else{
