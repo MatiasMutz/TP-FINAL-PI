@@ -314,7 +314,7 @@ int query3(dataADT data){
     }
     FILE *query3 = fopen("query3.csv", "wt");
     fprintf(query3, "day;day_counts;night_counts;total_counts\n");
-    for (int i = 0; i < 7; ++i) {
+    for (int i = 0; i < 7; i++) {
         fprintf(query3,"%s;%zu;%zu;%zu\n", data->dias[i].dia, data->dias[i].cantP_diurno, data->dias[i].cantP_nocturno, (data->dias[i].cantP_diurno+data->dias[i].cantP_nocturno) );
     }
     fclose(query3);
