@@ -53,11 +53,10 @@ static dataADT newData(){
 }
 
 //devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector, en dim tiene que estar la poscion del ultimo elemento para cargar los sensores
-static size_t dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
+static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 {
     size_t i;
     for(i=0;i<posUltElem && sensor[i].id!=id;i++);
-    printf("esta: %zu\n", i);
     return i;
 }
 
@@ -65,27 +64,30 @@ static size_t dondeEsta(const size_t id,elemQ1* sensor,const size_t posUltElem)
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarsensores(const size_t id,char* name, dataADT data)
-{
+{ 
     if (data->posUltElem==data->dimVQ1)
     {
-        data->VQ1=realloc(data->VQ1,sizeof(struct elemQ1)*(BLOCK+data->dimVQ1));
-        data->VQ1+=BLOCK;
+        data->VQ1=realloc(data->VQ1,(sizeof(elemQ1)*BLOCK)+data->dimVQ1);  
+        data->dimVQ1+=BLOCK; 
+        for(int i=data->posUltElem;i<data->dimVQ1;i++)
+        {
+            data->VQ1[i].id=0;
+        }   
     }
-    size_t posElem=dondeEsta(id,data->VQ1,data->posUltElem);
+    int posElem=dondeEsta(id,data->VQ1,data->posUltElem);
     if (posElem==data->posUltElem)
     {
-        if (errno==ENOMEM)
-        {
-            return ENOMEM;
-        }
-        else
-        {
-            printf("%zu\n", posElem);
-            data->VQ1[posElem].id=id;
-            data->VQ1[posElem].name=name;
-            data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
-            data->posUltElem++;
-        }
+    if (errno==ENOMEM)
+    {
+        return ENOMEM;
+    }
+    else
+    {
+        data->VQ1[posElem].id=id;
+        data->VQ1[posElem].name=name;
+        data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
+        data->posUltElem++;
+    }
     }
     else{
         errno=0;
