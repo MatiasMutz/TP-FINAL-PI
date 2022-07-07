@@ -32,10 +32,13 @@ typedef struct dataCDT{
     elemQ3 dias[7];
 }dataCDT;
 
+//crea la estructura que almacena todo los datos utiles
 static dataADT newData(){
     return calloc(1, sizeof(dataCDT));
 }
 
+//carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
+//de momento no revisa si hay id repetidos
 static int cargarsensores(const size_t id,const char* name, dataADT data)
 {
     if (data->posUltElem == data->dimVQ1)
@@ -56,15 +59,17 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     }
 }
 
-static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,dataADT data)
+//carga peatones en el sensor con el mismo id
+static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
 {
     int i;
-    for ( i=0;i<data->dimVQ1 && id!=data->VQ1[i].id;i++);
-    if(i<data->dimVQ1)
+    for ( i=0;i<dim && id!=sensor[i].id;i++);
+    if(i<dim)
     {
-            data->VQ1[i].cantP_sensor+=cantPeatones;
+            sensor[i].cantP_sensor+=cantPeatones;
     }
 }
+
 static int compare(elemQ1 elem1,elemQ1 elem2)
 {
     int rta;
@@ -78,12 +83,14 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
     }
 }
 
+//Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
 static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
 {
     if (VQ1!=NULL)
     qsort(VQ1,sizeof(VQ1[0]),dim,compare);
 }
 
+//Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
 static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
         listQ2 aux = malloc(sizeof(elemQ2));
@@ -98,7 +105,6 @@ static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPer
     }
     else if(year == l->anio){
         l->cantP_anio += cantPers;
-        return l;
     }
     else{
         l->tail = addYearRec(l->tail, year, cantPers,flag);
@@ -106,6 +112,7 @@ static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPer
     return l;
 }
 
+//devuelve si hubo error de memoria
 static int addYear (dataADT data,const unsigned short year,const size_t cantPers)
 {
     int flag=0;
@@ -113,6 +120,7 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
+//Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
     errno = 0;
     dataADT new = newData();
@@ -172,6 +180,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return OK;
 }
 
+//Carga los datos del query 1 en el archivo csv
 int query1(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
@@ -185,6 +194,7 @@ int query1(dataADT data){
     return OK;
 }
 
+//Carga los datos del query 2 en el archivo csv
 int query2(dataADT data){
     if(data == NULL){
         return NOT_PROCESSED;
@@ -210,6 +220,8 @@ static listQ2 next(listQ2 l){
      return aux;
 }
 
+//Carga los datos del query 3 en el archivo csv
 int query3(dataADT data);
 
+//libera toda la memoria que esta en uso
 void freeAll(dataADT data);
