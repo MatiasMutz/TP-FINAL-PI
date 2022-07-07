@@ -1,6 +1,9 @@
 #include "queries.h"
 //Carga los datos del query 1 en el archivo csv
 
+#define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
+                                printf("Los datos no fueron procesados.\n");\
+                                return NOT_PROCESSED;}
 
 int query1(dataADT data){
     enum ERRORS result = OK;
@@ -12,7 +15,7 @@ int query1(dataADT data){
     dim = getCantSensores(data);
     for (int i = 0; i < dim; i++){
         result = q1Processed(data, &name, &cantP_sensor, i);
-        VERIFICA_PROCESADO(result)
+        VERIFICA_PROCESADO(result);
         fprintf(query1, "%s;%zu\n" , name, cantP_sensor);
     }
     fclose(query1);
@@ -47,7 +50,7 @@ int query3(dataADT data){
     size_t cantP_diurno, cantP_nocturno, suma;
     for (int i = 0; i < 7; i++) {
         result = q3Processed(data, &dia, &cantP_diurno, &cantP_nocturno, &suma, i);
-        VERIFICA_PROCESADO(result)
+        VERIFICA_PROCESADO(result);
         fprintf(query3,"%s;%zu;%zu;%zu\n", dia, cantP_diurno, cantP_nocturno, suma);
     }
     fclose(query3);

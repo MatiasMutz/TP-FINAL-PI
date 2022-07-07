@@ -8,6 +8,7 @@
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
                                 return NOT_PROCESSED;}
+
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
                                                      fclose(readings);\

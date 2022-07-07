@@ -23,11 +23,11 @@ int hasNext(dataADT data);
 
 size_t getCantSensores (dataADT data);
 
-void q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice);
+int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice);
 
 int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear);
 
-void q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice);
+int q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice);
 
 //libera la memoria
 void freeAll(dataADT data);
