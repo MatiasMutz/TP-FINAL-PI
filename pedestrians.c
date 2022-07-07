@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
     //LEER
     size_t id, people;
     char* name;
-    char* activo
+    char* activo;
     char* day;
     char line[MAX_LINE];
     unsigned short year, time;
@@ -53,6 +53,7 @@ int main(int argc, char *argv[]){
         cargarSensor (id, name, activo[0], data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
+    fclose(sensors);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
@@ -60,8 +61,7 @@ int main(int argc, char *argv[]){
         result = processLine(data, id, people, name, activo, day, year, time);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
-
-    processAllData(data);
+    fclose(readings);
 
     ordenarSensors(data);
 

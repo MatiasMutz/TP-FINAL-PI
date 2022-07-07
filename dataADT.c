@@ -1,5 +1,4 @@
 #include "dataADT.h"
-#define DATA_NO_INICIALIZADA //borrar
 #define BLOCK 20
 #define MAX_LINE 1024
 #define DIURNO 0
@@ -64,7 +63,7 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
 {
     if (data!=NULL)
     {
-        return DATA_NO_INICIALIZADA;
+        return NOT_PROCESSED;
     }
     if (data->posNewElem==data->dimVQ1)
     {
@@ -100,7 +99,7 @@ static int cargarActivos(const size_t id,char* name, dataADT data)
 int cargarSensor (size_t id, char* name, char activo, dataADT data){
     if (data==NULL)
     {
-        return DATA_NO_INICIALIZADA;
+        return NOT_PROCESSED;
     }
     enum ERRORS result = OK;
     if(activo == 'A') {
@@ -136,17 +135,19 @@ static int compare(const void* elem1,const void* elem2)
     }
 }
 
-//Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
-void ordenarSensors(dataADT data, int (* compare)(const void* elem1,const void* elem2))
-{
-    if(data->VQ1!=NULL)
-        qsort(data->VQ1, data->dimVQ1, sizeof(elemQ1), compare);
-}
 
-int ajusteRealloc (dataADT data){
+static int ajusteRealloc (dataADT data){
     data->dimVQ1=data->posNewElem;
     data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*data->dimVQ1);
     return OK;
+}
+
+//Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
+void ordenarSensors(dataADT data)
+{
+    if(data->VQ1!=NULL)
+        ajusteRealloc(data);
+        qsort(data->VQ1, data->dimVQ1, sizeof(elemQ1), compare);
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -206,7 +207,7 @@ static int diurno_O_nocturno (unsigned short time){
 
 int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
 {
-    enum ERRORS result = 0K;
+    enum ERRORS result = OK;
     result = cargarPeatonesQ1(people, id, data);
     if(result == CARGO){
         result = addYear(data, year, people);
@@ -265,28 +266,18 @@ int toBegin(dataADT data)
 {
     if (data==NULL)
     {
-        return DATA_NO_INICIALIZADA;
+        return NOT_PROCESSED;
     }
     data->iterador=data->firstQ2;
     return OK;
 }
 
 int hasNext(dataADT data){
-    return data->iterador!=NULL && data->iterador->tail!=NULL;
+    return data!=NULL && data->iterador!=NULL;
 }
 
-static listQ2 next( listQ2 iterador,unsigned short* year,size_t* cantP){
-    /*
-     *
-    if (hasNext(iterador))
-    {
-        *year=iterador->anio;
-    }
-     */
-    //????
-}
 
-size_t getDimQ1 (dataADT data){
+size_t getCantSensores (dataADT data){
     return data->dimVQ1;
 }
 
@@ -305,8 +296,15 @@ int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
         return NOT_PROCESSED;
     *year = data->iterador->anio;
     *cantPerYear = data->iterador->cantP_anio;
-    next(data);
-    return OK;
+    if(hasNext(data))
+    {
+        next(data);
+        return OK;
+    }
+    else
+    {
+        return NO_HAY_MAS_ELEMENTO;
+    }
 }
 
 //devuelve los parametros de la q3 y pasa al siguiente elemento

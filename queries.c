@@ -9,7 +9,7 @@ int query1(dataADT data){
     size_t dim;
     char* name;
     size_t cantP_sensor;
-    dim = getDimQ1(data);
+    dim = getCantSensores(data);
     for (int i = 0; i < dim; i++){
         result = q1Processed(data, &name, &cantP_sensor, i);
         VERIFICA_PROCESADO(result)
@@ -26,10 +26,13 @@ int query2(dataADT data){
     toBegin(data);
     unsigned short year;
     size_t cantPerYear;
-    while(hasNext(data)){
-        result = q2Processed(data, &year, &cantPerYear);
-        VERIFICA_PROCESADO(result)
+    while((result = q2Processed(data, &year, &cantPerYear))==OK){
         fprintf(query2,"%u;%zu\n", year, cantPerYear);
+    }
+    VERIFICA_PROCESADO(result);
+    if(result==NO_HAY_MAS_ELEMENTO)
+    {
+        printf("No hay mas elemntos, se requiere volver a hacer un toBegin");
     }
     fclose(query2);
     return OK;

@@ -5,7 +5,7 @@
 #include <string.h>
 #include <errno.h>
 
-enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM};
+enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM,NO_HAY_MAS_ELEMENTO};
 
 typedef struct dataCDT * dataADT;
 
@@ -13,7 +13,7 @@ dataADT newData();
 
 int cargarSensor(const size_t id,char* name,char activo, dataADT data);
 
-void ordenarSensors(dataADT data, int (* compare)(const void* elem1,const void* elem2));
+void ordenarSensors(dataADT data);
 
 int processLine(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time);
 
@@ -21,7 +21,7 @@ int toBegin(dataADT data);
 
 int hasNext(dataADT data);
 
-size_t getDimQ1 (dataADT data);
+size_t getCantSensores (dataADT data);
 
 void q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice);
 
