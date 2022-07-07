@@ -338,4 +338,4 @@ void freeAll(dataADT data){
     }
     free(data->VQ1);
     free(data);
-} 
+}
