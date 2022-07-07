@@ -14,7 +14,7 @@ dataADT newData();
 int cargarSensor(const size_t id,char* name,char activo, dataADT data);
 
 //procesa los datos de los archivos resolviendo las queries
-int processData(const char* reading, const char* sensor, dataADT* data);
+//int processData(const char* reading, const char* sensor, dataADT* data);
 
 int toBegin(dataADT data);
 

@@ -199,44 +199,47 @@ int processData2(dataADT data,size_t id,size_t people,char* name,char activo,cha
 
 }
 
+/*
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
-    errno = 0;
-    int result = OK;
-    *data = newData();
-    if(errno == ENOMEM){
-        return ENOMEM;
-    }
-    //ABRO AMBOS ARCHIVOS
-    FILE *sensors = fopen(sensor, "rt");
-    if(sensors == NULL)
-        return NOT_EXIST;
-    FILE *readings = fopen(reading, "rt");
-    if(readings == NULL){
-        fclose(sensors);
-        return NOT_EXIST;
-    }
 
-    char line [MAX_LINE];
-    size_t id;
-    char* name;
-    char* activo;
-
-    (*data)->dimVQ1=(*data)->posNewElem;
-    (*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
-
-    unsigned short year, time;
-    char* day;
-    size_t people;
-
-
-    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
-
-    //CIERRO AMBOS ARCHIVOS
-    fclose(sensors);
-    fclose(readings);
-    return OK;
+errno = 0;
+int result = OK;
+*data = newData();
+if(errno == ENOMEM){
+    return ENOMEM;
 }
+//ABRO AMBOS ARCHIVOS
+FILE *sensors = fopen(sensor, "rt");
+if(sensors == NULL)
+    return NOT_EXIST;
+FILE *readings = fopen(reading, "rt");
+if(readings == NULL){
+    fclose(sensors);
+    return NOT_EXIST;
+}
+
+char line [MAX_LINE];
+size_t id;
+char* name;
+char* activo;
+
+(*data)->dimVQ1=(*data)->posNewElem;
+(*data)->VQ1=realloc((*data)->VQ1,sizeof(elemQ1)*(*data)->dimVQ1);
+
+unsigned short year, time;
+char* day;
+size_t people;
+
+
+ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
+
+//CIERRO AMBOS ARCHIVOS
+fclose(sensors);
+fclose(readings);
+return OK;
+}
+*/
 
 int toBegin(dataADT data)
 {
