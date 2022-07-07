@@ -80,10 +80,10 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
 static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
 {
     int i;
-    for ( i=0;i<dim && id!=sensor[i].id;i++);
+    for(i=0;i<dim && id!=sensor[i].id;i++);
     if(i<dim)
     {
-            sensor[i].cantP_sensor+=cantPeatones;
+        sensor[i].cantP_sensor+=cantPeatones;
     }
 }
 
@@ -92,7 +92,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
     int rta;
     if ((rta=elem2.cantP_sensor - elem1.cantP_sensor)!=0)
     {
-            return rta;
+        return rta;
     }
     else
     {
@@ -137,7 +137,6 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
-
 static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
@@ -153,7 +152,6 @@ static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t 
             dias[i].cantP_nocturno+=cantPers;
         }
     }
-    
 }
 
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
@@ -182,8 +180,12 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         id = strtoul(value, NULL, 10);
         name = strtok(NULL, ";");
         activo = strtok(NULL, ";");
-        //cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
-        //llamar a funcion que se encarga de usarlos
+        if(activo == 'A'){
+            enum ERRORS result = cargarsensores(id,name,new);
+            if(result != OK){
+                return result;
+            }
+        }
     }
     //LEIDA DE DATOS DE READINGS
     unsigned short year;
@@ -204,13 +206,14 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
         value = strtok(NULL, ";"); //leo la cant personas
         people = strtoul(value, NULL, 10); //lo paso a unisg long
-        //addYear (dataADT data,const unsigned short year,const size_t cantPers)
-        //agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
+        cargarPeatonesQ1(people, id, new->VQ1, new->dimVQ1);
+        addYear(new, year, people);
         if(time<6 || time>=18){
             time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
         }else{
             time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
         }
+        agregarPersdia(new->dias, time, people, day);
     }
     //CIERRO AMBOS ARCHIVOS
     fclose(sensors);

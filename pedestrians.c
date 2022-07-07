@@ -9,7 +9,7 @@ int main(int argc, char *argv[]){
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
     }
-    dataADT data;
+    dataADT data = NULL;
     enum ERRORS processResult = processData(argv[1], argv[2], &data);
     if(processResult == NOT_EXIST) {
         printf("El archivo pasado por parametro no existe o no fue encontrado.\n");
