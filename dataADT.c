@@ -218,7 +218,6 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     //CIERRO AMBOS ARCHIVOS
     fclose(sensors);
     fclose(readings);
-    free(new); //este free no se deberia hacer aca, esta aca para que no tire el sanitaze. Una vez hecho el freeAll lo sacamos.
     return OK;
 }
 
