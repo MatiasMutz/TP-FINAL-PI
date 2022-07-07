@@ -4,9 +4,12 @@ OUTPUT_FILE = pedestrians
 FILES = pedestrians.c dataADT.c lectura.c queries.c
 FLAGS = -std=c99 -pedantic -Wall -g -fsanitize=address
 
-all: dataADT
+all:
 	$(COMPILER) -o $(OUTPUT_FILE) $(FILES) $(FLAGS)
 
-dataADT: dataADT.c
+
+debug: FLAGS += DEBUG_COMPILER
+debug: all
+
 clean:
 	rm -r $(OUTPUT_FILE) *.o
