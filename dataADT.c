@@ -97,7 +97,7 @@ static int cargarsensores(const size_t id,char* name, dataADT data)
 //carga peatones en el sensor con el mismo id
 static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* sensor,const size_t dim)
 {
-    i=dondeEsta(id,sensor,dim);
+    int i=dondeEsta(id,sensor,dim);
     if(i<dim)
     {
         sensor[i].cantP_sensor+=cantPeatones;
@@ -181,10 +181,8 @@ static int verificoActivo (size_t id, char* name, char activo, dataADT data){
     return result;
 }
 
-static void leerSensors(size_t* id, char** name, char* activo, FILE* sensors){
-    char line[MAX_LINE];
+static void leerSensors(size_t* id, char** name, char* activo, FILE* sensors, char line [MAX_LINE]){
     char* value;
-    fgets(line, MAX_LINE, sensors);
     value = strtok(line, ";");
     *id = strtoul(value, NULL, 10);
     *name = strtok(NULL, ";");
@@ -192,8 +190,7 @@ static void leerSensors(size_t* id, char** name, char* activo, FILE* sensors){
     return;
 }
 
-static void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, FILE* readings){
-    char line[MAX_LINE];
+static void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, FILE* readings, char line [MAX_LINE]){
     char* value;
     value = strtok(line, ";"); //tomo el valor del anio
     *year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
@@ -208,8 +205,6 @@ static void leerReadings(unsigned short* year, unsigned short* time, size_t* id,
     *people = strtoul(value, NULL, 10); //lo paso a unisg long
     return;
 }
-
-
 
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
@@ -229,24 +224,25 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         return NOT_EXIST;
     }
 
+    char line [MAX_LINE];
     size_t id;
     char* name;
     char* activo;
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
-        leerSensors(&id, &name, &activo, sensors);
+        leerSensors(&id, &name, &activo, sensors, line);
         result = verificoActivo(id, name, activo[0], *data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
-    ordenarQ1(*data->VQ1, *data->dimVQ1, compare());
+    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare());
 
     unsigned short year, time;
     char* day;
     size_t people;
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
-        leerReadings(&year, &time, &id, &day, &people, readings);
-        result = cargarPeatonesQ1(people, id, *data->VQ1, *data->dimVQ1);
+        leerReadings(&year, &time, &id, &day, &people, readings, line);
+        result = cargarPeatonesQ1(people, id, (*data)->VQ1, (*data)->dimVQ1);
         if(result == CARGO){
             result = addYear(*data, year, people);
             VERIFICAR_ERRORES(result, sensors, readings)
@@ -255,7 +251,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
             }else{
                 time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
             }
-            agregarPersdia(*data->dias, time, people, day);
+            agregarPersdia((*data)->dias, time, people, day);
         }
     }
 
