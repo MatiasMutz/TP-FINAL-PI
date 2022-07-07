@@ -234,7 +234,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         result = verificoActivo(id, name, activo[0], *data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
-    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare());
+    ordenarQ1((*data)->VQ1, (*data)->dimVQ1, compare);
 
     unsigned short year, time;
     char* day;
