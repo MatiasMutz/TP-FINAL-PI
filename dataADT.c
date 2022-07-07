@@ -43,6 +43,7 @@ static dataADT newData(){
     new->dias[4].dia="viernes";
     new->dias[5].dia="sabado";
     new->dias[6].dia="domingo";
+    return new;
 }
 
 //devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector
@@ -70,7 +71,8 @@ static int cargarsensores(const size_t id,const char* name, dataADT data)
     else
     {
         data->VQ1[posUltElem].id=id;
-        data->VQ1[posUltElem].name=name;
+        strcpy(data->VQ1[posUltElem].name, name);
+        //data->VQ1[posUltElem].name=name;
         data->VQ1[posUltElem].cantP_sensor=0;
         return OK;
     }
@@ -104,7 +106,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
 static void ordenarQ1(elemQ1* VQ1,const size_t dim,int (* compare)(elemQ1 elem1,elemQ1 elem2))
 {
     if (VQ1!=NULL)
-    qsort(VQ1,sizeof(VQ1[0]),dim,compare);
+        qsort(VQ1,sizeof(VQ1[0]),dim,compare);
 }
 
 //Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
@@ -140,7 +142,7 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
 static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
-    for( i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
+    for(i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
     if (i<7)
     {
         if (time==DIURNO)
@@ -180,7 +182,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         id = strtoul(value, NULL, 10);
         name = strtok(NULL, ";");
         activo = strtok(NULL, ";");
-        if(activo == 'A'){
+        if(activo[0] == 'A'){
             enum ERRORS result = cargarsensores(id,name,new);
             if(result != OK){
                 return result;
@@ -235,6 +237,10 @@ int query1(dataADT data){
     return OK;
 }
 
+static int hasNext(const listQ2 l){
+    return l->iterador != NULL;
+}
+
 //Carga los datos del query 2 en el archivo csv
 int query2(dataADT data){
     if(data == NULL){
@@ -248,10 +254,6 @@ int query2(dataADT data){
     }
     fclose(query2);
     return OK;
-}
-
-static int hasNext(const listQ2 l){
-     return l->iterador != NULL;
 }
 
 static listQ2 next(listQ2 l){
@@ -275,7 +277,7 @@ int query3(dataADT data){
 }
 
 static void freeRec(listQ2 l){
-    if(first == NULL){
+    if(l == NULL){
         return;
     }
     listQ2 aux = l->tail;
