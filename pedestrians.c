@@ -8,11 +8,13 @@
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
+                                freeAll(data);\
                                 return NOT_PROCESSED;}
 
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
                                                      fclose(readings);\
+                                                     freeAll(data);\
                                                      return result;}
 
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
@@ -42,13 +44,15 @@ int main(int argc, char *argv[]){
     //ABRO AMBOS ARCHIVOS
     FILE *sensors = fopen(argv[1], "rt");
     if(sensors == NULL){
-        printf("El archivo que no fue encontrado o no existe");
+        printf("El archivo que no fue encontrado o no existe\n");
+        freeAll(data);
         return NOT_EXIST;
     }
     FILE *readings = fopen(argv[2], "rt");
     if(readings == NULL){
         fclose(sensors);
-        printf("El archivo que no fue encontrado o no existe");
+        printf("El archivo que no fue encontrado o no existe\n");
+        freeAll(data);
         return NOT_EXIST;
     }
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado

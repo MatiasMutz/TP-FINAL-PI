@@ -12,7 +12,8 @@ int query1(dataADT data){
     size_t dim;
     char* name;
     size_t cantP_sensor;
-    dim = getCantSensores(data);
+    result = getCantSensores(data, &dim);
+    VERIFICA_PROCESADO(result);
     for (int i = 0; i < dim; i++){
         result = q1Processed(data, &name, &cantP_sensor, i);
         VERIFICA_PROCESADO(result);

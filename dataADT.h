@@ -19,9 +19,7 @@ int processLine(dataADT data,size_t id,size_t people,char* name,char* day,unsign
 
 int toBegin(dataADT data);
 
-int hasNext(dataADT data);
-
-size_t getCantSensores (dataADT data);
+int getCantSensores (dataADT data, size_t* dim);
 
 int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice);
 

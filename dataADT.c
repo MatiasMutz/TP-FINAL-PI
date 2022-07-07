@@ -61,10 +61,6 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
 static int cargarActivos(const size_t id,char* name, dataADT data)
 {
-    if (data!=NULL)
-    {
-        return NOT_PROCESSED;
-    }
     if (data->posNewElem==data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
@@ -237,9 +233,11 @@ int hasNext(dataADT data){
     return data!=NULL && data->iterador!=NULL;
 }
 
-
-size_t getCantSensores (dataADT data){
-    return data->dimVQ1;
+int getCantSensores (dataADT data, size_t* dim){
+    if(data == NULL)
+        return NOT_PROCESSED;
+    *dim = data->dimVQ1;
+    return OK;
 }
 
 //devuelve los parametros de la q1
@@ -293,10 +291,12 @@ static void freeRec(listQ2 l){
 
 //libera toda la memoria que esta en uso
 void freeAll(dataADT data){
-    freeRec(data->firstQ2);
-    for (int i = 0; i < data->dimVQ1; ++i) {
-        free(data->VQ1[i].name);
+    if(data!=NULL){
+        freeRec(data->firstQ2);
+        for (int i = 0; i < data->dimVQ1; ++i) {
+            free(data->VQ1[i].name);
+        }
+        free(data->VQ1);
+        free(data);
     }
-    free(data->VQ1);
-    free(data);
 }
