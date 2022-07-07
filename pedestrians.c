@@ -18,19 +18,19 @@ int main(int argc, char *argv[]){
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
     }
-    dataADT data = newData();
-    //LEER
 
+    errno = 0;
+    dataADT data = newData();
+    if(errno == ENOMEM){
+        return ENOMEM;
+    }
+
+    //LEER
     size_t id, people;
     char* name, activo, day;
     char line[MAX_LINE];
     unsigned short year, time;
 
-    errno = 0;
-    int result = OK;
-    if(errno == ENOMEM){
-        return ENOMEM;
-    }
     //ABRO AMBOS ARCHIVOS
     FILE *sensors = fopen(argv[1], "rt");
     if(sensors == NULL)
@@ -40,6 +40,8 @@ int main(int argc, char *argv[]){
         fclose(sensors);
         return NOT_EXIST;
     }
+
+    int result = OK;
 
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
@@ -65,7 +67,6 @@ int main(int argc, char *argv[]){
             agregarPersdia(data, time, people, day);
         }
     }
-
 
     /*
     enum ERRORS processResult = processData(argv[1], argv[2], &data);

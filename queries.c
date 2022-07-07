@@ -19,10 +19,13 @@ int query2(dataADT data){
     }
     FILE *query2 = fopen("query2.csv", "wt");
     fprintf(query2, "year;counts\n");
-    data->iterador = data->firstQ2;
-    while(hasNext(data->iterador)){
-        fprintf(query2,"%u;%zu\n", data->iterador->anio, data->iterador->cantP_anio);
-        data->iterador = next(data->iterador);
+    toBegin(data);
+    unsigned short year;
+    size_t cantPerYear;
+    while(hasNext(data)){
+        q2Processed(data, &year, &cantPerYear);
+        //fprintf(query2,"%u;%zu\n", data->iterador->anio, data->iterador->cantP_anio);
+        fprintf(query2,"%u;%zu\n", year, cantPerYear);
     }
     fclose(query2);
     return OK;
