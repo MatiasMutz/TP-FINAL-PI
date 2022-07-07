@@ -2,6 +2,8 @@
 
 #define BLOCK 20
 #define MAX_LINE 1024
+#define DIURNO 0
+#define NOCTURNO 1
 
 typedef struct elemQ1{
     size_t id;
@@ -31,9 +33,16 @@ typedef struct dataCDT{
     elemQ3 dias[7];
 }dataCDT;
 
-//crea la estructura que almacena todo los datos utiles
+//crea la estructura que almacena todos los datos utiles
 static dataADT newData(){
-    return calloc(1, sizeof(dataCDT));
+    dataADT new= calloc(1, sizeof(dataCDT));
+    new->dias[0].dia="lunes";
+    new->dias[1].dia="martes";
+    new->dias[2].dia="miercoles";
+    new->dias[3].dia="jueves";
+    new->dias[4].dia="viernes";
+    new->dias[5].dia="sabado";
+    new->dias[6].dia="domingo";
 }
 
 //devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector
@@ -43,6 +52,7 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t dim)
     for(i=0;i<dim && sensor[i].id!=id;i++);
     return i;
 }
+
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
@@ -127,6 +137,25 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
+
+static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
+{
+    int i;
+    for( i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
+    if (i<7)
+    {
+        if (time==DIURNO)
+        {
+            dias[i].cantP_diurno+=cantPers;
+        }
+        else if(time==NOCTURNO)
+        {
+            dias[i].cantP_nocturno+=cantPers;
+        }
+    }
+    
+}
+
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
     errno = 0;
@@ -175,9 +204,9 @@ int processData(const char* sensor, const char* reading, dataADT* data){
         value = strtok(NULL, ";"); //leo la cant personas
         people = strtoul(value, NULL, 10); //lo paso a unisg long
         if(time<6 || time>=18){
-            //fue nocturno. Mandar a la funcion que lo procese como nocturno.
+            time=NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
         }else{
-            //fue diurno. Mandar a la funcion que lo procese como diurno.
+            time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
         }
     }
     //CIERRO AMBOS ARCHIVOS
