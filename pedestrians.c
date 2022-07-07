@@ -37,6 +37,7 @@ int main(int argc, char *argv[]){
         return NOT_EXIST;
     }
 
+
     leerSensors(&id, &name, &activo, sensors, line);
     leerReadings(&year, &time, &id, &day, &people, readings, line);
 
