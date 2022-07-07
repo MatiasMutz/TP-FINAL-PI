@@ -24,3 +24,4 @@ void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char**
     *people = strtoul(value, NULL, 10); //lo paso a unisg long
     return;
 }
+

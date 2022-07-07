@@ -1,6 +1,7 @@
 #include "dataADT.h"
-
+#define DATA_NO_INICIALIZADA //borrar
 #define BLOCK 20
+#define MAX_LINE 1024
 #define DIURNO 0
 #define NOCTURNO 1
 #define NO_CARGO 0
@@ -59,11 +60,28 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
     return i;
 }
 
+ int cargarSensor (size_t id, char* name, char activo, dataADT data){
+    if (data==NULL)
+    {
+        return DATA_NO_INICIALIZADA;
+    }
+    enum ERRORS result = OK;
+    if(activo == 'A') {
+        result = cargarActivos(id, name, data);
+    }
+    return result;
+}
+
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
-int cargarsensores(const size_t id,char* name, dataADT data)
+static int cargarActivos(const size_t id,char* name, dataADT data)
 {
+    if (data!=NULL)
+    {
+        return DATA_NO_INICIALIZADA;
+    }
+
     if (data->posNewElem==data->dimVQ1)
     {
         data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
@@ -177,17 +195,31 @@ static void agregarPersdia(elemQ3* dias,const unsigned short time,const size_t c
     }
 }
 
-static int verificoActivo (size_t id, char* name, char activo, dataADT data){
-    enum ERRORS result = OK;
-    if(activo == 'A') {
-        result = cargarsensores(id, name, data);
-    }
-    return result;
+
+
+int processData2(dataADT data,size_t id,size_t people,char* name,char activo,char* day,unsigned short year,unsigned short time)
+{
+
 }
 
 
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
+    errno = 0;
+    int result = OK;
+    *data = newData();
+    if(errno == ENOMEM){
+        return ENOMEM;
+    }
+    //ABRO AMBOS ARCHIVOS
+    FILE *sensors = fopen(sensor, "rt");
+    if(sensors == NULL)
+        return NOT_EXIST;
+    FILE *readings = fopen(reading, "rt");
+    if(readings == NULL){
+        fclose(sensors);
+        return NOT_EXIST;
+    }
 
     char line [MAX_LINE];
     size_t id;
@@ -232,14 +264,26 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return OK;
 }
 
+int ToBegin(dataADT data)
+{
+    if (data==NULL)
+    {
+        return DATA_NO_INICIALIZADA;
+    }
+    data->iterador=data->firstQ2;
+    return OK;
+}
 
-
-static int hasNext(const listQ2 iterador){
+ static int hasNext(const listQ2 iterador){
     return iterador!=NULL && iterador->tail != NULL;
 }
 
-static listQ2 next(listQ2 iterador){
-    return iterador->tail;
+ static void listQ2 Next( listQ2 iterador,unsigned short* year,size_t* cantP){
+    if (hasNext(iterador))
+    {
+        *year=iterador->anio
+    }
+    
 }
 
 static void freeRec(listQ2 l){
