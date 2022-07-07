@@ -88,7 +88,7 @@ static void cargarPeatonesQ1(const size_t cantPeatones,const size_t id,elemQ1* s
     i=dondeEsta(id,sensor,dim);
     if(i<dim)
     {
-            sensor[i].cantP_sensor+=cantPeatones;
+        sensor[i].cantP_sensor+=cantPeatones;
     }
 }
 
@@ -97,7 +97,7 @@ static int compare(elemQ1 elem1,elemQ1 elem2)
     int rta;
     if ((rta=elem2.cantP_sensor - elem1.cantP_sensor)!=0)
     {
-            return rta;
+        return rta;
     }
     else
     {
@@ -244,6 +244,12 @@ static int hasNext(const listQ2 l){
     return l->iterador != NULL;
 }
 
+static listQ2 next(listQ2 l){
+    listQ2 aux = l->iterador;
+    l->iterador = l->iterador->tail;
+    return aux;
+}
+
 //Carga los datos del query 2 en el archivo csv
 int query2(dataADT data){
     if(data == NULL){
@@ -254,15 +260,10 @@ int query2(dataADT data){
     data->firstQ2->iterador = data->firstQ2;
     while(hasNext(data->firstQ2->iterador)){
         fprintf(query2,"%u;%zu\n", data->firstQ2->iterador->anio, data->firstQ2->iterador->cantP_anio);
+        data->firstQ2->iterador = next(data->firstQ2->iterador);
     }
     fclose(query2);
     return OK;
-}
-
-static listQ2 next(listQ2 l){
-     listQ2 aux = l->iterador;
-     l->iterador = l->iterador->tail;
-     return aux;
 }
 
 //Carga los datos del query 3 en el archivo csv
@@ -271,7 +272,7 @@ int query3(dataADT data){
         return NOT_PROCESSED;
     }
     FILE *query3 = fopen("query3.csv", "w");
-    fprintf(query1, "day;day_counts;night_counts;total_counts\n");
+    fprintf(query3, "day;day_counts;night_counts;total_counts\n");
     for (int i = 0; i < 7; ++i) {
         fprintf(query3,"%s;%zu;%zu;%zu\n", data->dias[i].dia, data->dias[i].cantP_diurno, data->dias[i].cantP_nocturno, (data->dias[i].cantP_diurno+data->dias[i].cantP_nocturno) );
     }
