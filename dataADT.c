@@ -40,7 +40,7 @@ typedef struct dataCDT{
 }dataCDT;
 
 //crea la estructura que almacena todos los datos utiles
-static dataADT newData(){
+dataADT newData(){
     dataADT new= calloc(1, sizeof(dataCDT));
     new->dias[0].dia="Monday";
     new->dias[1].dia="Tuesday";
@@ -63,7 +63,7 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
 //carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
 //de momento no revisa si hay id repetidos
 //consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
-static int cargarsensores(const size_t id,char* name, dataADT data)
+int cargarsensores(const size_t id,char* name, dataADT data)
 {
     if (data->posNewElem==data->dimVQ1)
     {
@@ -186,30 +186,6 @@ static int verificoActivo (size_t id, char* name, char activo, dataADT data){
     return result;
 }
 
-static void leerSensors(size_t* id, char** name, char** activo, FILE* sensors, char line [MAX_LINE]){
-    char* value;
-    value = strtok(line, ";");
-    *id = strtoul(value, NULL, 10);
-    *name = strtok(NULL, ";");
-    *activo = strtok(NULL, ";");
-    return;
-}
-
-static void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, FILE* readings, char line [MAX_LINE]){
-    char* value;
-    value = strtok(line, ";"); //tomo el valor del anio
-    *year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
-    value = strtok(NULL, ";"); // no me importan los meses
-    value = strtok(NULL, ";"); // no me importa la fecha
-    *day = strtok(NULL, ";"); //leo el dia
-    value = strtok(NULL, ";"); //leo el id
-    *id = strtoul(value, NULL, 10); //lo paso a unisg long
-    value = strtok(NULL, ";");
-    *time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
-    value = strtok(NULL, ";"); //leo la cant personas
-    *people = strtoul(value, NULL, 10); //lo paso a unisg long
-    return;
-}
 
 //Procesa la data, lee los archivo y formatea los datos para que las queries esten listas
 int processData(const char* sensor, const char* reading, dataADT* data){
@@ -272,19 +248,6 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     return OK;
 }
 
-//Carga los datos del query 1 en el archivo csv
-int query1(dataADT data){
-    if(data == NULL){
-        return NOT_PROCESSED;
-    }
-    FILE* query1 = fopen("query1.csv", "wt");
-    fprintf(query1, "sensor;counts\n");
-    for (int i = 0; i < data->dimVQ1; i++) {
-        fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
-    }
-    fclose(query1);
-    return OK;
-}
 
 
 static int hasNext(const listQ2 iterador){
@@ -293,36 +256,6 @@ static int hasNext(const listQ2 iterador){
 
 static listQ2 next(listQ2 iterador){
     return iterador->tail;
-}
-
-//Carga los datos del query 2 en el archivo csv
-int query2(dataADT data){
-    if(data == NULL){
-        return NOT_PROCESSED;
-    }
-    FILE *query2 = fopen("query2.csv", "wt");
-    fprintf(query2, "year;counts\n");
-    data->iterador = data->firstQ2;
-    while(hasNext(data->iterador)){
-        fprintf(query2,"%u;%zu\n", data->iterador->anio, data->iterador->cantP_anio);
-        data->iterador = next(data->iterador);
-    }
-    fclose(query2);
-    return OK;
-}
-
-//Carga los datos del query 3 en el archivo csv
-int query3(dataADT data){
-    if(data == NULL){
-        return NOT_PROCESSED;
-    }
-    FILE *query3 = fopen("query3.csv", "wt");
-    fprintf(query3, "day;day_counts;night_counts;total_counts\n");
-    for (int i = 0; i < 7; i++) {
-        fprintf(query3,"%s;%zu;%zu;%zu\n", data->dias[i].dia, data->dias[i].cantP_diurno, data->dias[i].cantP_nocturno, (data->dias[i].cantP_diurno+data->dias[i].cantP_nocturno) );
-    }
-    fclose(query3);
-    return OK;
 }
 
 static void freeRec(listQ2 l){

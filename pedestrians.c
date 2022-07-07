@@ -10,6 +10,9 @@ int main(int argc, char *argv[]){
         return ARG_INV;
     }
     dataADT data = NULL;
+    //LEER
+
+
     enum ERRORS processResult = processData(argv[1], argv[2], &data);
     if(processResult == NOT_EXIST) {
         printf("El archivo pasado por parametro no existe o no fue encontrado.\n");
@@ -19,6 +22,8 @@ int main(int argc, char *argv[]){
         printf("No hay espacio disponible para guardar datos.\n");
         return NO_MEMORY;
     }
+
+    //SALIDA
     query1(data);
     query2(data);
     query3(data);

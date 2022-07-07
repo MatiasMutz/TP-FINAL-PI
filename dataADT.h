@@ -9,6 +9,10 @@ enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM};
 
 typedef struct dataCDT * dataADT;
 
+dataADT newData();
+
+int cargarsensores(const size_t id,char* name, dataADT data);
+
 //procesa los datos de los archivos resolviendo las queries
 int processData(const char* reading, const char* sensor, dataADT* data);
 
