@@ -6,8 +6,13 @@ int query1(dataADT data){
     }
     FILE* query1 = fopen("query1.csv", "wt");
     fprintf(query1, "sensor;counts\n");
-    for (int i = 0; i < data->dimVQ1; i++) {
-        fprintf(query1, "%s;%zu\n" , data->VQ1[i].name, data->VQ1[i].cantP_sensor);
+    size_t dim;
+    char* name;
+    size_t cantP_sensor;
+    dim = getDimQ1(data);
+    for (int i = 0; i < dim; i++){
+        q1Processed(data, &name, &cantP_sensors, i);
+        fprintf(query1, "%s;%zu\n" , names[i], cantP_sensor[i]);
     }
     fclose(query1);
     return OK;
@@ -24,7 +29,6 @@ int query2(dataADT data){
     size_t cantPerYear;
     while(hasNext(data)){
         q2Processed(data, &year, &cantPerYear);
-        //fprintf(query2,"%u;%zu\n", data->iterador->anio, data->iterador->cantP_anio);
         fprintf(query2,"%u;%zu\n", year, cantPerYear);
     }
     fclose(query2);
