@@ -18,7 +18,13 @@ int processData(const char* reading, const char* sensor, dataADT* data);
 
 int query1(dataADT data);
 
+int toBegin(dataADT data);
+
 int GetQ2(dataADT data,unsigned short* year,size_t* cantP);
+
+int hasNext(dataADT data);
+
+void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear);
 
 //libera la memoria
 void freeAll(dataADT data);

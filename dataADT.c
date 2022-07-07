@@ -248,15 +248,18 @@ int toBegin(dataADT data)
     return OK;
 }
 
-static int hasNext(dataADT data){
+int hasNext(dataADT data){
     return data->iterador!=NULL && data->iterador->tail!=NULL;
 }
 
 static listQ2 next( listQ2 iterador,unsigned short* year,size_t* cantP){
+    /*
+     *
     if (hasNext(iterador))
     {
         *year=iterador->anio;
     }
+     */
     //????
 }
 
@@ -279,7 +282,7 @@ void freeAll(dataADT data){
 }
 
 //devuelve los parametros y pasa al siguiente elemento
-void q2Processed (dataADT data, usigned short* year, size_t* cantPerYear){
+void q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
     *year = data->iterador->anio;
     *cantPerYear = data->iterador->cantP_anio;
     next(data);
