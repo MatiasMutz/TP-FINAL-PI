@@ -11,8 +11,8 @@ int query1(dataADT data){
     size_t cantP_sensor;
     dim = getDimQ1(data);
     for (int i = 0; i < dim; i++){
-        q1Processed(data, &name, &cantP_sensors, i);
-        fprintf(query1, "%s;%zu\n" , names[i], cantP_sensor[i]);
+        q1Processed(data, &name, &cantP_sensor, i);
+        fprintf(query1, "%s;%zu\n" , name, cantP_sensor);
     }
     fclose(query1);
     return OK;
