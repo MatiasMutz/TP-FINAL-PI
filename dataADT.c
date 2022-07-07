@@ -162,10 +162,12 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
 
 static void agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
+    printf("HOLA\n");
     int i;
     for(i=0;i<7 && strcmp(dias[i].dia,dia)!=0;i++);
     if (i<7)
     {
+        printf("HOLA\n");
         if (time==DIURNO)
         {
             dias[i].cantP_diurno+=cantPers;
@@ -247,6 +249,8 @@ int processData(const char* sensor, const char* reading, dataADT* data){
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         leerReadings(&year, &time, &id, &day, &people, readings, line);
+                
+
         result = cargarPeatonesQ1(people, id, (*data)->VQ1, (*data)->dimVQ1);
         if(result == CARGO){
             result = addYear(*data, year, people);
@@ -256,6 +260,7 @@ int processData(const char* sensor, const char* reading, dataADT* data){
             }else{
                 time=DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
             }
+            
             agregarPersdia((*data)->dias, time, people, day);
         }
     }
