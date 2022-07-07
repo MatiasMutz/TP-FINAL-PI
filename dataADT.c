@@ -142,7 +142,6 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
     return flag;
 }
 
-
 static int agregarPersdia(elemQ3 dias[7],const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
