@@ -203,7 +203,7 @@ int query2(dataADT data){
     fprintf(query2, "year;counts\n");
     data->firstQ2->iterador = data->firstQ2;
     while(hasNext(data->firstQ2->iterador)){
-        fprintf(query2,"%u;\n", data->firstQ2->iterador->anio, data->firstQ2->iterador->cantP_anio);
+        fprintf(query2,"%u;%zu\n", data->firstQ2->iterador->anio, data->firstQ2->iterador->cantP_anio);
     }
     fclose(query2);
     return OK;
