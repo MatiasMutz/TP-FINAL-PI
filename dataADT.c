@@ -205,7 +205,7 @@ static int diurno_O_nocturno (unsigned short time){
         return DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
 }
 
-int processLine(dataADT data,size_t id,size_t people,char* name,char* day,unsigned short year,unsigned short time)
+int processLine(dataADT data,size_t id,size_t people,char* day,unsigned short year,unsigned short time)
 {
     enum ERRORS result = OK;
     result = cargarPeatonesQ1(people, id, data);

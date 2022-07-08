@@ -15,7 +15,7 @@ int query1(dataADT data){
     result = getCantSensores(data, &dim);
     VERIFICA_PROCESADO(result);
     for (int i = 0; i < dim; i++){
-        result = q1Processed(data, &name, &cantP_sensor, i);
+        result = getDataQ1(data, &name, &cantP_sensor, i);
         VERIFICA_PROCESADO(result);
         fprintf(query1, "%s;%zu\n" , name, cantP_sensor);
     }
@@ -30,7 +30,7 @@ int query2(dataADT data){
     toBegin(data);
     unsigned short year;
     size_t cantPerYear;
-    while((result = q2Processed(data, &year, &cantPerYear))==OK){
+    while((result = getDataQ2(data, &year, &cantPerYear))==OK){
         fprintf(query2,"%u;%zu\n", year, cantPerYear);
     }
     VERIFICA_PROCESADO(result);
@@ -46,7 +46,7 @@ int query3(dataADT data){
     char* dia;
     size_t cantP_diurno, cantP_nocturno, suma;
     for (int i = 0; i < 7; i++) {
-        result = q3Processed(data, &dia, &cantP_diurno, &cantP_nocturno, &suma, i);
+        result = getDataQ3(data, &dia, &cantP_diurno, &cantP_nocturno, &suma, i);
         VERIFICA_PROCESADO(result);
         fprintf(query3,"%s;%zu;%zu;%zu\n", dia, cantP_diurno, cantP_nocturno, suma);
     }
