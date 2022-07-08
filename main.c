@@ -4,12 +4,11 @@
 #include "lectura.h"
 #include "queries.h"
 
-#define MAX_LINE 1024
-
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
                                 freeAll(data);\
                                 return NOT_PROCESSED;}
+
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
                                                      fclose(readings);\
@@ -20,7 +19,6 @@
 
 int main(int argc, char *argv[]){
     enum ERRORS result = OK;
-
     if( argc != ARGS ) {
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
@@ -41,34 +39,35 @@ int main(int argc, char *argv[]){
     unsigned short year, time;
 
     //ABRO AMBOS ARCHIVOS
-    FILE *sensors = fopen(argv[1], "rt");
+    FILE *sensors = openFile(argv[1]);
     if(sensors == NULL){
         printf("El archivo que no fue encontrado o no existe\n");
         freeAll(data);
         return NOT_EXIST;
     }
-    FILE *readings = fopen(argv[2], "rt");
+
+    FILE *readings = openFile(argv[2]);
     if(readings == NULL){
         fclose(sensors);
         printf("El archivo que no fue encontrado o no existe\n");
         freeAll(data);
         return NOT_EXIST;
     }
-    fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
+
     while(fgets(line, MAX_LINE, sensors)){
         result = leerSensors(&id, &name, &activo, line);
-        VERIFICAR_ERRORES (result, sensors, readings)
-        result = cargarSensor (id, name, activo, data);
-        VERIFICAR_ERRORES (result, sensors, readings)
+        VERIFICAR_ERRORES(result, sensors, readings)
+        result = cargarSensor(id, name, activo, data);
+        VERIFICAR_ERRORES(result, sensors, readings)
     }
 
-    fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         result = leerReadings(&year, &time, &id, &day, &people, line);
-        VERIFICAR_ERRORES (result, sensors, readings)
+        VERIFICAR_ERRORES(result, sensors, readings)
         result = processLine(data, id, people, day, year, time);
-        VERIFICAR_ERRORES (result, sensors, readings)
+        VERIFICAR_ERRORES(result, sensors, readings)
     }
+
     fclose(sensors);
     fclose(readings);
 

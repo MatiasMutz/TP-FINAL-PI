@@ -3,6 +3,15 @@
 #define NOT_EXPECTED_LINE   if(line == NULL || *line == 0)\
                                 return ERROR_LINE;
 
+FILE* openFile(char* name){
+    char line[MAX_LINE];
+    FILE *file = fopen(name, "rt");
+    if(file != NULL)
+        fgets(line, MAX_LINE, file); //para saltearme el encabezado
+    return file;
+}
+
+
 int leerSensors(size_t* id, char** name, char** activo, char line []){
     NOT_EXPECTED_LINE
     char* value;

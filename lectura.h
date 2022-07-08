@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX_LINE 1024
 
 /**
  * @brief dado un string con un formato devuelve en distintos parametros de salida los datos del sensor
@@ -26,5 +27,12 @@ int leerSensors(size_t* id, char** name, char** activo, char line []);
  * @return          devuelve un codigo de error
  */
 int leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, char line []);
+
+/**
+ * @brief abre un archivo y si existe saltea la primera linea (encabezado) del mismo
+ * @param name      path del archivo
+ * @return          devuelve el archivo
+ */
+FILE* openFile(char* name);
 
 #endif
