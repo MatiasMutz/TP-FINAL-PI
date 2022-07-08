@@ -35,14 +35,6 @@ int main(int argc, char *argv[]){
         return ENOMEM;
     }
 
-    //LEER
-    size_t id, people;
-    char* name;
-    char* activo;
-    char* day;
-    char line[MAX_LINE];
-    unsigned short year, time;
-
     //ABRO AMBOS ARCHIVOS
     FILE *sensors = openFile(argv[1]);
     if(sensors == NULL){
@@ -59,16 +51,19 @@ int main(int argc, char *argv[]){
         return NOT_EXIST;
     }
 
-    while(fgets(line, MAX_LINE, sensors)){
-        result = leerSensors(&id, &name, &activo, line);
-        VERIFICAR_ERRORES(result, sensors, readings)
+    //LEER
+    size_t id, people;
+    char* name;
+    char* activo;
+    char* day;
+    unsigned short year, time;
+
+    while(leerSensors(&id, &name, &activo, sensors) == OK){
         result = cargarSensor(id, name, activo, data);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
 
-    while(fgets(line, MAX_LINE, readings)){
-        result = leerReadings(&year, &time, &id, &day, &people, line);
-        VERIFICAR_ERRORES(result, sensors, readings)
+    while(leerReadings(&year, &time, &id, &day, &people, readings) == OK){
         result = processLine(data, id, people, day, year, time);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
