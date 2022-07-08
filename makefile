@@ -1,7 +1,7 @@
 COMPILER = gcc
 DEBUG_COMPILER = -g -DDEBUG=1
 OUTPUT_FILE = pedestrians
-FILES = pedestrians.c dataADT.c lectura.c queries.c
+FILES = main.c dataADT.c lectura.c queries.c
 FLAGS = -std=c99 -pedantic -Wall -g -fsanitize=address
 
 all:
