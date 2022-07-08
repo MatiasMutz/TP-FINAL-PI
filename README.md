@@ -28,9 +28,9 @@ La salida seran 3 archivos .csv con los datos procesados según 3 consultas dist
 Este comando compila el programa y crea el archivo ejecutable llamado pedestrians.
 
 3) Ahora ya se puede ejecutar el programa de la siguiente manera:
-`./pedestrians readings.csv sensors.csv`
+`./pedestrians sensors.csv readings.csv`
 
-siendo readings.csv el archivo con las mediciones totales y sensors.csv el archivo de los sensores.
+siendo sensors.csv el archivo de los sensores y readings.csv el archivo con las mediciones totales.
 
 ATENCIÓN: es MUY importante enviar los archivos en este orden para el correcto funcionamiento del programa.
 
