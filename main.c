@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         leerReadings(&year, &time, &id, &day, &people, line);
-        result = processLine(data, id, people, name, day, year, time);
+        result = processLine(data, id, people, day, year, time);
         VERIFICAR_ERRORES(result, sensors, readings)
     }
     fclose(readings);
