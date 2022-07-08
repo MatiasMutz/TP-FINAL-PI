@@ -1,16 +1,20 @@
 #include "lectura.h"
 
+#define NOT_EXPECTED_LINE   if(line == NULL || *line == 0)\
+                                return ERROR_LINE;
 
-void leerSensors(size_t* id, char** name, char** activo, char line []){
+int leerSensors(size_t* id, char** name, char** activo, char line []){
+    NOT_EXPECTED_LINE
     char* value;
     value = strtok(line, ";");
     *id = strtoul(value, NULL, 10);
     *name = strtok(NULL, ";");
     *activo = strtok(NULL, ";");
-    return;
+    return OK;
 }
 
-void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, char line []){
+int leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, char line []){
+    NOT_EXPECTED_LINE
     char* value;
     value = strtok(line, ";"); //tomo el valor del anio
     *year = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
@@ -23,6 +27,6 @@ void leerReadings(unsigned short* year, unsigned short* time, size_t* id, char**
     *time = (unsigned short)(atoi(value)); //lo llevo a que sea un unsig short
     value = strtok(NULL, ";"); //leo la cant personas
     *people = strtoul(value, NULL, 10); //lo paso a unisg long
-    return;
+    return OK;
 }
 

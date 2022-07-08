@@ -11,7 +11,6 @@
                                 printf("Los datos no fueron procesados.\n");\
                                 freeAll(data);\
                                 return NOT_PROCESSED;}
-
 #define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
                                                      fclose(sensors);\
                                                      fclose(readings);\
@@ -60,18 +59,20 @@ int main(int argc, char *argv[]){
     }
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
-        leerSensors(&id, &name, &activo, line);
-        cargarSensor (id, name, activo, data);
-        VERIFICAR_ERRORES(result, sensors, readings)
+        result = leerSensors(&id, &name, &activo, line);
+        VERIFICAR_ERRORES (result, sensors, readings)
+        result = cargarSensor (id, name, activo, data);
+        VERIFICAR_ERRORES (result, sensors, readings)
     }
-    fclose(sensors);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
-        leerReadings(&year, &time, &id, &day, &people, line);
+        result = leerReadings(&year, &time, &id, &day, &people, line);
+        VERIFICAR_ERRORES (result, sensors, readings)
         result = processLine(data, id, people, day, year, time);
-        VERIFICAR_ERRORES(result, sensors, readings)
+        VERIFICAR_ERRORES (result, sensors, readings)
     }
+    fclose(sensors);
     fclose(readings);
 
     result = ordenarSensors(data);
