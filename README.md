@@ -39,6 +39,6 @@ ATENCIÓN: es MUY importante enviar los archivos en este orden para el correcto 
 REFERENCIAS: 
 
 * (**1*): el archivo de sensores debe ser un archivo con 3 columnas separadas con ';' tendiendo el siguiente orden: el
-id del sensor, la segunda el nombre y la tercera el estado ('A' para activo y 'R' para removido).
+id del sensor, el nombre y el estado ('A' para activo y 'R' para removido).
 * (**2*): el archivo de mediciones debe ser un archivo con 7 columnas separadas con ';' tendiendo el siguiente orden: el
 año, el mes, el día (número), el día (nombre), el id del sensor, el horario y la cantidad de personas de la medición.
