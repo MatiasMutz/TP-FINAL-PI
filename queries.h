@@ -1,6 +1,9 @@
 #ifndef TPE_FINAL_QUERIES_H
 #define TPE_FINAL_QUERIES_H
 #include "dataADT.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /*
  * deja en un csv los resultados de la query1.

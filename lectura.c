@@ -1,5 +1,6 @@
 #include "lectura.h"
 
+
 void leerSensors(size_t* id, char** name, char** activo, char line []){
     char* value;
     value = strtok(line, ";");

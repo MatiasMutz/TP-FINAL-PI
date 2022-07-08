@@ -1,6 +1,9 @@
 #ifndef TPE_FINAL_LECTURA_H
 #define TPE_FINAL_LECTURA_H
 #include "dataADT.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * @brief dado un string con un formato devuelve en distintos parametros de salida los datos del sensor
