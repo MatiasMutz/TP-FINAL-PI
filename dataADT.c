@@ -35,7 +35,6 @@ typedef struct dataCDT{
     elemQ3 dias[7];
 }dataCDT;
 
-//crea la estructura que almacena todos los datos utiles
 dataADT newData(){
     dataADT new= calloc(1, sizeof(dataCDT));
     new->dias[0].dia="Monday";
@@ -49,6 +48,7 @@ dataADT newData(){
 }
 
 //devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector, en dim tiene que estar la poscion del ultimo elemento para cargar los sensores
+
 static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
 {
     size_t i;
@@ -219,7 +219,7 @@ int processLine(dataADT data,size_t id,size_t people,char* day,unsigned short ye
     return OK;
 }
 
-int toBegin(dataADT data)
+int toBeginQ2(dataADT data)
 {
     if (data==NULL)
     {
@@ -229,8 +229,14 @@ int toBegin(dataADT data)
     return OK;
 }
 
-int hasNext(dataADT data){
+static int hasNext(dataADT data){
     return data!=NULL && data->iterador!=NULL;
+}
+
+static listQ2 next(listQ2 list, unsigned short* year, size_t* cantPerYear){
+    *year = list->anio;
+    *cantPerYear = list->cantP_anio;
+    return list->tail;
 }
 
 int getCantSensores (dataADT data, size_t* dim){
@@ -240,8 +246,7 @@ int getCantSensores (dataADT data, size_t* dim){
     return OK;
 }
 
-//devuelve los parametros de la q1
-int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice){
+int getDataQ1 (dataADT data,char** name, size_t* cantP_sensors, int indice){
     if(data == NULL)
         return NOT_PROCESSED;
     *name = data->VQ1[indice].name;
@@ -249,14 +254,9 @@ int q1Processed (dataADT data,char** name, size_t* cantP_sensors, int indice){
     return OK;
 }
 
-static listQ2 next(listQ2 list, unsigned short* year, size_t* cantPerYear){
-    *year = list->anio;
-    *cantPerYear = list->cantP_anio;
-    return list->tail;
-}
 
-//devuelve los parametros de la q2 y pasa al siguiente elemento
-int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
+
+int getDataQ2 (dataADT data, unsigned short* year, size_t* cantPerYear){
     if(data == NULL)
         return NOT_PROCESSED;
     if(hasNext(data))
@@ -270,8 +270,7 @@ int q2Processed (dataADT data, unsigned short* year, size_t* cantPerYear){
     }
 }
 
-//devuelve los parametros de la q3 y pasa al siguiente elemento
-int q3Processed (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice){
+int getDataQ3 (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_nocturno, size_t* suma, int indice){
     if(data == NULL)
         return NOT_PROCESSED;
     *dia = data->dias[indice].dia;
@@ -289,7 +288,6 @@ static void freeRec(listQ2 l){
     free(l);
 }
 
-//libera toda la memoria que esta en uso
 void freeAll(dataADT data){
     if(data!=NULL){
         freeRec(data->firstQ2);

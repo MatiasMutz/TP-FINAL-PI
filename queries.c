@@ -1,5 +1,4 @@
 #include "queries.h"
-//Carga los datos del query 1 en el archivo csv
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
@@ -27,7 +26,7 @@ int query2(dataADT data){
     enum ERRORS result = OK;
     FILE *query2 = fopen("query2.csv", "wt");
     fprintf(query2, "year;counts\n");
-    toBegin(data);
+    toBeginQ2(data);
     unsigned short year;
     size_t cantPerYear;
     while((result = getDataQ2(data, &year, &cantPerYear))==OK){
@@ -38,7 +37,6 @@ int query2(dataADT data){
     return OK;
 }
 
-//Carga los datos del query 3 en el archivo csv
 int query3(dataADT data){
     enum ERRORS result = OK;
     FILE *query3 = fopen("query3.csv", "wt");

@@ -49,7 +49,7 @@ int ordenarSensors(dataADT data);
  * @return      devuelve un codigo de error
  * 
  */
-int toBegin(dataADT data);
+int toBeginQ2(dataADT data);
 
 /**
  * @brief Utiliza un parametro de salida, para devolver la cantidad de sensores almacenados en la estructura
