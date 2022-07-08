@@ -11,4 +11,4 @@ debug: FLAGS += DEBUG_COMPILER
 debug: all
 
 clean:
-	rm -r $(OUTPUT_FILE) *.o
+	rm -f $(OUTPUT_FILE) *.o
