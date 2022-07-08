@@ -5,6 +5,25 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX_LINE 1024
+#define COLUMNAS_SENSORS 3
+#define COLUMNAS_READINGS 7
+
+/**
+ * @brief abre un archivo y si existe saltea la primera linea (encabezado) del mismo
+ * @param name          path del archivo
+ * @param cant_campos   indica la cantidad de campos que debe tener la linea
+ * @param flag          indica si la cantidad de campos es incorrecta
+ * @return              devuelve el archivo
+ */
+FILE* openFile(char* name,int cant_campos,int *flag);
+
+/**
+ * @brief cuenta la cantidad de campos en una linea (la cantidad de ; mas 1)
+ * @param line  linea analizada para contar campos
+ * @return      cantidad de campos encontrados
+ * 
+ */
+int verificarColumnas(char* line);
 
 /**
  * @brief dado un string con un formato devuelve en distintos parametros de salida los datos del sensor
@@ -28,11 +47,6 @@ int leerSensors(size_t* id, char** name, char** activo, FILE* sensors);
  */
 int leerReadings(unsigned short* year, unsigned short* time, size_t* id, char** day, size_t* people, FILE* readings);
 
-/**
- * @brief abre un archivo y si existe saltea la primera linea (encabezado) del mismo
- * @param name      path del archivo
- * @return          devuelve el archivo
- */
-FILE* openFile(char* name);
+
 
 #endif

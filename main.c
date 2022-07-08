@@ -34,23 +34,34 @@ int main(int argc, char *argv[]){
     if(errno == ENOMEM){
         return ENOMEM;
     }
-
+    char line[MAX_LINE];
     //ABRO AMBOS ARCHIVOS
-    FILE *sensors = openFile(argv[1]);
+    int flag=0;
+    FILE *sensors = openFile(argv[1],COLUMNAS_SENSORS,&flag);
     if(sensors == NULL){
-        printf("El archivo que no fue encontrado o no existe\n");
+        if (flag==INCORRECT_FORMAT)
+        {
+            printf("El archivos no tiene la cantidad de campos correcta\n");
+            return INCORRECT_FORMAT;
+        }
+        printf("El archivo no fue encontrado o no existe\n");
         freeAll(data);
         return NOT_EXIST;
     }
-
-    FILE *readings = openFile(argv[2]);
+   
+    FILE *readings = openFile(argv[2],COLUMNAS_READINGS,&flag);
     if(readings == NULL){
         fclose(sensors);
-        printf("El archivo que no fue encontrado o no existe\n");
+        if (flag==INCORRECT_FORMAT)
+        {
+            printf("El archivos no tiene la cantidad de campos correcta\n");
+            return INCORRECT_FORMAT;
+        }
+        printf("El archivo no fue encontrado o no existe\n");
         freeAll(data);
         return NOT_EXIST;
     }
-
+    
     //LEER
     size_t id, people;
     char* name;

@@ -3,14 +3,34 @@
 #define NOT_EXPECTED_LINE   if(line == NULL || *line == 0)\
                                 return ERROR_LINE;
 
-FILE* openFile(char* name){
+FILE* openFile(char* name,int cant_campos,int* flag){
     char line[MAX_LINE];
     FILE *file = fopen(name, "rt");
     if(file != NULL)
+    {
         fgets(line, MAX_LINE, file); //para saltearme el encabezado
+        if(verificarColumnas(line)!=cant_campos) //verifica que el header de sensors tenga la cantidad correcta de campos
+        {
+            fclose(file);
+            *flag=INCORRECT_FORMAT;
+            return NULL;
+        }
+    }
     return file;
 }
 
+int verificarColumnas(char* line)
+{
+    int dim=strlen(line)+1,cont=0;
+    for(int i=0;i<dim;i++)
+    {
+        if(line[i]==';')
+        {
+            cont++;
+        }
+    }
+    return cont+1;
+}
 
 int leerSensors(size_t* id, char** name, char** activo, FILE* sensors){
     char line[MAX_LINE];
