@@ -7,7 +7,6 @@ FLAGS = -std=c99 -pedantic -Wall -g -fsanitize=address
 all:
 	$(COMPILER) -o $(OUTPUT_FILE) $(FILES) $(FLAGS)
 
-
 debug: FLAGS += DEBUG_COMPILER
 debug: all
 
