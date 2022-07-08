@@ -10,6 +10,11 @@
                                 printf("Los datos no fueron procesados.\n");\
                                 freeAll(data);\
                                 return NOT_PROCESSED;}
+#define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
+                                                     fclose(sensors);\
+                                                     fclose(readings);\
+                                                     freeAll(data);\
+                                                     return result;}
 
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
 
@@ -52,37 +57,17 @@ int main(int argc, char *argv[]){
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
         result = leerSensors(&id, &name, &activo, line);
-        if(result != OK){
-            fclose(sensors);
-            fclose(readings);
-            freeAll(data);
-            return result;
-        }
+        VERIFICAR_ERRORES (result, sensors, readings)
         result = cargarSensor (id, name, activo, data);
-        if(result != OK){
-            fclose(sensors);
-            fclose(readings);
-            freeAll(data);
-            return result;
-        }
+        VERIFICAR_ERRORES (result, sensors, readings)
     }
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
         result = leerReadings(&year, &time, &id, &day, &people, line);
-        if(result != OK){
-            fclose(sensors);
-            fclose(readings);
-            freeAll(data);
-            return result;
-        }
+        VERIFICAR_ERRORES (result, sensors, readings)
         result = processLine(data, id, people, day, year, time);
-        if(result != OK){
-            fclose(sensors);
-            fclose(readings);
-            freeAll(data);
-            return result;
-        }
+        VERIFICAR_ERRORES (result, sensors, readings)
     }
     fclose(sensors);
     fclose(readings);
