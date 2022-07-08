@@ -47,8 +47,15 @@ dataADT newData(){
     return new;
 }
 
-//devuelve dim si no esta el sensor, o devuelve la posicion donde esta el vector, en dim tiene que estar la poscion del ultimo elemento para cargar los sensores
-
+/**
+ * @brief busca si el sensor esta en el array y su posicion
+ * @param id            es el identificador del sensor
+ * @param sensor        array que contiene todos los sensores cargados
+ * @param posNewElem    posicion donde se debe almacenar un nuevo sensor al array
+ * @return              devuelve la posicion donde esta almacenado el sensor dentro del array si es que esta repetido o devuelve la posicion en el array donde 
+ *                      se debe almacenar si no esta almacenado
+ * 
+ */
 static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
 {
     size_t i;
@@ -56,9 +63,15 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
     return i;
 }
 
-//carga los sensores en el vector para el query1. Dato extra: Pensado para que primero se fije si el sensor esta activo, y si lo esta se use la funcion
-//de momento no revisa si hay id repetidos
-//consideracion, se debe achicar el vector una vez que se hayan cargado todos los sensores
+
+/**
+ * @brief carga los datos del sensor en la estructura
+ * @param id    es el identificador del sensor
+ * @param name  es el nombre del sensor
+ * @param data  puntero a la estructura de almacenamiento
+ * @return      devuelve un elemento del codigo de errores
+ * 
+ */
 static int cargarActivos(const size_t id,char* name, dataADT data)
 {
     if (data->posNewElem==data->dimVQ1)
@@ -104,7 +117,14 @@ int cargarSensor(size_t id, char* name, char* activo, dataADT data){
     return result;
 }
 
-//carga peatones en el sensor con el mismo id
+/**
+ * @brief carga datos de las mediciones en los elemento que tenga el mismo id y se encuentre almacenado en la estructura
+ * @param cantPeatones  cantidad de peatones de la medicion
+ * @param id            identificador del sensor
+ * @param data          puntero a la estructura de almacenamiento
+ * @return              devuelve un elemento del codigo de errores
+ * 
+ */
 static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id, dataADT data)
 {
     int i=dondeEsta(id,data->VQ1,data->dimVQ1);
@@ -116,6 +136,16 @@ static int cargarPeatonesQ1(const size_t cantPeatones,const size_t id, dataADT d
     return NO_CARGO;
 }
 
+/**
+ * @brief compara dos sensores
+ *        Lo utilizamos para ordenar los sensores por dos criterios:
+ *          1) cantidad de personas registradas por sensor descendiente
+ *          2) alfabeticamente (cuando la cantidad de personas sea la misma)
+ * @param elem1 son los elementos a compara
+ * @param elem2
+ * @return      devuelve un numero distinto de 0
+ * 
+ */
 static int compare(const void* elem1,const void* elem2)
 {
     elemQ1 Aelem1= *(elemQ1*) elem1;
@@ -131,14 +161,22 @@ static int compare(const void* elem1,const void* elem2)
     }
 }
 
-
-static int ajusteRealloc (dataADT data){
+/**
+ * @brief ajusta el tamaño del vector que contiene los sensores, ya que como se agregan bloques, puede sobrar memoria
+ * @param data          puntero a la estructura de almacenamiento
+ */
+static void ajusteRealloc (dataADT data){
     data->dimVQ1=data->posNewElem;
     data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*data->dimVQ1);
-    return OK;
 }
 
-//Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
+/**
+ * @brief ordena el vector de sensores utilizando como criterio la funcion compare
+ *        Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
+ * @param data          puntero a la estructura de almacenamiento
+ * @return              devuelve un elemento del codigo de errores
+ * 
+ */
 int ordenarSensors(dataADT data)
 {
     if(data==NULL)
@@ -150,7 +188,16 @@ int ordenarSensors(dataADT data)
     return OK;
 }
 
-//Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
+
+/**
+ * @brief Agrega un año si no esta en la lista para el query 2 o le agrega la cantidad de personas de la medicion para ese año
+ * @param l     nodo de la lista de elementos de la query 2
+ * @param year      año en el que se realizo la medicion
+ * @param cantPers  cantidad de personas que contabilizo el sensor en la medicion
+ * @param flag      parametro de salida que almacena un codigo de error
+ * @return          devuelve la direccion a un nodo de la lista
+ * 
+ */
 static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPers,int* flag){
     if(l == NULL || year > l->anio){
         listQ2 aux = malloc(sizeof(elemQ2));
@@ -173,13 +220,29 @@ static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPer
 }
 
 //devuelve si hubo error de memoria
+/**
+ * @brief agrega informacion a la lista con la informacion de query2
+ * @param data      puntero a la estructura de almacenamiento
+ * @param year      año en el que se realizo la medicion
+ * @param cantPers  cantidad de personas que contabilizo el sensor en la medicion
+ * @return          devuelve un elemento del codigo de errores
+ * 
+ */
 static int addYear (dataADT data,const unsigned short year,const size_t cantPers)
 {
-    int flag=0;
+    int flag=OK;
     data->firstQ2=addYearRec(data->firstQ2,year,cantPers,&flag);
     return flag;
 }
 
+/**
+ * @brief agrega la informacion de la medicion al dia correspondiente
+ * @param data      puntero a la estructura de almacenamiento
+ * @param time      hora en la que se realizo la medicion
+ * @param cantPers  cantidad de personas que contabilizo el sensor en la medicion
+ * @param dia       dia en el que se realizo la medicion (ej:Monday,Tuesday,...) 
+ * 
+ */
 static void agregarPersdia(dataADT data,const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
@@ -198,12 +261,21 @@ static void agregarPersdia(dataADT data,const unsigned short time,const size_t c
     }
 }
 
+/**
+ * @brief determina si un horario es diurno o nocturno.
+ *        Es diurno si la medicion se realizo entre las 6 y 17 inclusive
+ *        Es nocturno si la medicion se realizo entre las 0 y 5 inclusive o entre las 18 y 0 inclusive
+ * @param time hora en la que se realizo la medicion
+ * @return devuelve DIURNO si es un horario diurno o NOCTURNO si es un horario nocturno
+ * 
+ */
 static int diurno_O_nocturno (unsigned short time){
     if(time<6 || time>=18)
         return NOCTURNO; //fue nocturno. Mandar a la funcion que lo procese como nocturno.
     else
         return DIURNO; //fue diurno. Mandar a la funcion que lo procese como diurno.
 }
+
 
 int processLine(dataADT data,size_t id,size_t people,char* day,unsigned short year,unsigned short time)
 {
@@ -229,10 +301,24 @@ int toBeginQ2(dataADT data)
     return OK;
 }
 
+/**
+ * @brief revisa si la estructura no es NULL y si el iterador de la estructura no es NULL
+ * @param data      puntero a la estructura de almacenamiento
+ * @return 1 si cumple o 0 si no cumple
+ * 
+ */
 static int hasNext(dataADT data){
     return data!=NULL && data->iterador!=NULL;
 }
 
+/**
+ * @brief guarda en los parametros de salida la informacion y devuelve la direccion del proximo elemento de la lista
+ * @param list        nodo de la lista
+ * @param year        parametro de salida donde se almacena el año en el que se realizaron las mediciones
+ * @param cantPerYear parametro de salida donde se almacena las cantidad de personas que se contabilizaron en ese año
+ * @return            devuelve la direccion del nodo
+ * 
+ */
 static listQ2 next(listQ2 list, unsigned short* year, size_t* cantPerYear){
     *year = list->anio;
     *cantPerYear = list->cantP_anio;
@@ -253,8 +339,6 @@ int getDataQ1 (dataADT data,char** name, size_t* cantP_sensors, int indice){
     *cantP_sensors = data->VQ1[indice].cantP_sensor;
     return OK;
 }
-
-
 
 int getDataQ2 (dataADT data, unsigned short* year, size_t* cantPerYear){
     if(data == NULL)
@@ -280,6 +364,11 @@ int getDataQ3 (dataADT data, char** dia, size_t* cantP_diurno, size_t* cantP_noc
     return OK;
 }
 
+/**
+ * @brief libera todos los espacios de memoria reservados en el heap usado por los nodos de la lista
+ * @param l puntero a un nodo de una lista
+ * 
+ */
 static void freeRec(listQ2 l){
     if(l == NULL){
         return;
