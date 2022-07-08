@@ -34,7 +34,6 @@ int main(int argc, char *argv[]){
     if(errno == ENOMEM){
         return ENOMEM;
     }
-    char line[MAX_LINE];
     //ABRO AMBOS ARCHIVOS
     int flag=0;
     FILE *sensors = openFile(argv[1],COLUMNAS_SENSORS,&flag);
