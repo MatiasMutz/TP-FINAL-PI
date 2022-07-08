@@ -5,7 +5,6 @@
 #include "queries.h"
 
 #define MAX_LINE 1024
-#define CANT_DIAS 7
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\

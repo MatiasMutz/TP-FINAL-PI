@@ -35,7 +35,7 @@ typedef struct dataCDT{
     elemQ3 dias[7];
 }dataCDT;
 
-dataADT newData(char* dias[]){
+dataADT newData(char* dias[CANT_DIAS]){
     dataADT new= calloc(1, sizeof(dataCDT));
     for(int i=0;i<CANT_DIAS;i++)
     {

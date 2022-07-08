@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#define CANT_DIAS 7
 
 enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM, NO_HAY_MAS_ELEMENTO, ERROR_LINE};
 
@@ -13,7 +14,7 @@ typedef struct dataCDT * dataADT;
  * @param dias array de strings que contiene los nombres de los dias, debe estar igual que en el archivo de mediciones
  * @return Devuelve un puntero a la estructura
  */
-dataADT newData(char* dias[]);
+dataADT newData(char* dias[CANT_DIAS]);
 /**
  * @brief Si corresponde, carga los datos del sensor en la estructura dataCDT
  * @param id    es el identificador del sensor
