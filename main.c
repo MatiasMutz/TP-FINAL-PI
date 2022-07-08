@@ -11,12 +11,6 @@
                                 freeAll(data);\
                                 return NOT_PROCESSED;}
 
-#define VERIFICAR_ERRORES(result, sensors, readings) if(result != OK){\
-                                                     fclose(sensors);\
-                                                     fclose(readings);\
-                                                     freeAll(data);\
-                                                     return result;}
-
 #define ARGS 3 //debe ser el argumento del ejecutable mas los dos nombres de los archivos
 
 int main(int argc, char *argv[]){
@@ -57,17 +51,39 @@ int main(int argc, char *argv[]){
     }
     fgets(line, MAX_LINE, sensors); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, sensors)){
-        leerSensors(&id, &name, &activo, line);
-        cargarSensor (id, name, activo, data);
-        VERIFICAR_ERRORES(result, sensors, readings)
+        result = leerSensors(&id, &name, &activo, line);
+        if(result != OK){
+            fclose(sensors);
+            fclose(readings);
+            freeAll(data);
+            return result;
+        }
+        result = cargarSensor (id, name, activo, data);
+        if(result != OK){
+            fclose(sensors);
+            fclose(readings);
+            freeAll(data);
+            return result;
+        }
     }
     fclose(sensors);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
-        leerReadings(&year, &time, &id, &day, &people, line);
+        result = leerReadings(&year, &time, &id, &day, &people, line);
+        if(result != OK){
+            fclose(sensors);
+            fclose(readings);
+            freeAll(data);
+            return result;
+        }
         result = processLine(data, id, people, day, year, time);
-        VERIFICAR_ERRORES(result, sensors, readings)
+        if(result != OK){
+            fclose(sensors);
+            fclose(readings);
+            freeAll(data);
+            return result;
+        }
     }
     fclose(readings);
 
