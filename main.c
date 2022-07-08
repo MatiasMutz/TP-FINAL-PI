@@ -66,7 +66,6 @@ int main(int argc, char *argv[]){
             return result;
         }
     }
-    fclose(sensors);
 
     fgets(line, MAX_LINE, readings); //para saltearme el encabezado
     while(fgets(line, MAX_LINE, readings)){
@@ -85,6 +84,7 @@ int main(int argc, char *argv[]){
             return result;
         }
     }
+    fclose(sensors);
     fclose(readings);
 
     result = ordenarSensors(data);
