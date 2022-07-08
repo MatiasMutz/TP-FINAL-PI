@@ -28,23 +28,16 @@ int main(int argc, char *argv[]){
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
     }
-
-    errno = 0;
-    dataADT data = newData(nombre_dias);
-    if(errno == ENOMEM){
-        return ENOMEM;
-    }
     //ABRO AMBOS ARCHIVOS
     int flag=0;
     FILE *sensors = openFile(argv[1],COLUMNAS_SENSORS,&flag);
     if(sensors == NULL){
         if (flag==INCORRECT_FORMAT)
         {
-            printf("El archivos no tiene la cantidad de campos correcta\n");
+            printf("El archivo que deberia tener la informacion de los sensores no tiene la cantidad de campos correcta\n");
             return INCORRECT_FORMAT;
         }
         printf("El archivo no fue encontrado o no existe\n");
-        freeAll(data);
         return NOT_EXIST;
     }
    
@@ -53,12 +46,17 @@ int main(int argc, char *argv[]){
         fclose(sensors);
         if (flag==INCORRECT_FORMAT)
         {
-            printf("El archivos no tiene la cantidad de campos correcta\n");
+            printf("El archivos que deberia tener la informacion de las mediciones no tiene la cantidad de campos correcta\n");
             return INCORRECT_FORMAT;
         }
         printf("El archivo no fue encontrado o no existe\n");
-        freeAll(data);
         return NOT_EXIST;
+    }
+
+    errno = 0;
+    dataADT data = newData(nombre_dias);
+    if(errno == ENOMEM){
+        return ENOMEM;
     }
     
     //LEER
