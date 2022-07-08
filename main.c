@@ -5,6 +5,7 @@
 #include "queries.h"
 
 #define MAX_LINE 1024
+#define CANT_DIAS 7
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
@@ -22,13 +23,15 @@
 int main(int argc, char *argv[]){
     enum ERRORS result = OK;
 
+    char* nombre_dias[CANT_DIAS]={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+
     if( argc != ARGS ) {
         printf("La cantidad de argumentos ingresada no es valida.\n");
         return ARG_INV;
     }
 
     errno = 0;
-    dataADT data = newData();
+    dataADT data = newData(nombre_dias);
     if(errno == ENOMEM){
         return ENOMEM;
     }

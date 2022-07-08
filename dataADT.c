@@ -35,15 +35,12 @@ typedef struct dataCDT{
     elemQ3 dias[7];
 }dataCDT;
 
-dataADT newData(){
+dataADT newData(char* dias[]){
     dataADT new= calloc(1, sizeof(dataCDT));
-    new->dias[0].dia="Monday";
-    new->dias[1].dia="Tuesday";
-    new->dias[2].dia="Wednesday";
-    new->dias[3].dia="Thursday";
-    new->dias[4].dia="Friday";
-    new->dias[5].dia="Saturday";
-    new->dias[6].dia="Sunday";
+    for(int i=0;i<CANT_DIAS;i++)
+    {
+        new->dias[i].dia=dias[i];
+    }
     return new;
 }
 

@@ -10,9 +10,10 @@ enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM,NO_HAY_
 typedef struct dataCDT * dataADT;
 /**
  * @brief Crea e inicializa la estructura dataCDT
+ * @param dias array de strings que contiene los nombres de los dias, debe estar igual que en el archivo de mediciones
  * @return Devuelve un puntero a la estructura
  */
-dataADT newData();
+dataADT newData(char* dias[]);
 /**
  * @brief Si corresponde, carga los datos del sensor en la estructura dataCDT
  * @param id    es el identificador del sensor
