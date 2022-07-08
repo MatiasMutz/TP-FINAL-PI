@@ -1,10 +1,8 @@
 #ifndef TPE_FINAL_DATAADT_H
 #define TPE_FINAL_DATAADT_H
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+
 #define CANT_DIAS 7
+#define MAX_LINE 1024
 
 enum ERRORS {OK=0, ARG_INV, NOT_EXIST, NOT_PROCESSED ,NO_MEMORY = ENOMEM, NO_HAY_MAS_ELEMENTO, ERROR_LINE, FINISHED_READING,INCORRECT_FORMAT};
 

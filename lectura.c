@@ -1,7 +1,9 @@
 #include "lectura.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "dataADT.h"
 
-#define NOT_EXPECTED_LINE   if(line == NULL || *line == 0)\
-                                return ERROR_LINE;
 
 FILE* openFile(char* name,int cant_campos,int* flag){
     char line[MAX_LINE];

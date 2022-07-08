@@ -1,7 +1,10 @@
 #include "queries.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
-                                printf("Los datos no fueron procesados.\n");\
+#define VERIFICA_PROCESADO_QUERIES(x,name) if(x == NOT_PROCESSED) {\
+                                fclose(name);\
                                 return NOT_PROCESSED;}
 
 int query1(dataADT data){
@@ -12,10 +15,10 @@ int query1(dataADT data){
     char* name;
     size_t cantP_sensor;
     result = getCantSensores(data, &dim);
-    VERIFICA_PROCESADO(result);
+    VERIFICA_PROCESADO_QUERIES(result,query1);
     for (int i = 0; i < dim; i++){
         result = getDataQ1(data, &name, &cantP_sensor, i);
-        VERIFICA_PROCESADO(result);
+        VERIFICA_PROCESADO_QUERIES(result,query1);
         fprintf(query1, "%s;%zu\n" , name, cantP_sensor);
     }
     fclose(query1);
@@ -32,7 +35,7 @@ int query2(dataADT data){
     while((result = getDataQ2(data, &year, &cantPerYear))==OK){
         fprintf(query2,"%u;%zu\n", year, cantPerYear);
     }
-    VERIFICA_PROCESADO(result);
+    VERIFICA_PROCESADO_QUERIES(result,query2);
     fclose(query2);
     return OK;
 }
@@ -43,9 +46,9 @@ int query3(dataADT data){
     fprintf(query3, "day;day_counts;night_counts;total_counts\n");
     char* dia;
     size_t cantP_diurno, cantP_nocturno, suma;
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < CANT_DIAS; i++) {
         result = getDataQ3(data, &dia, &cantP_diurno, &cantP_nocturno, &suma, i);
-        VERIFICA_PROCESADO(result);
+        VERIFICA_PROCESADO_QUERIES(result,query3);
         fprintf(query3,"%s;%zu;%zu;%zu\n", dia, cantP_diurno, cantP_nocturno, suma);
     }
     fclose(query3);

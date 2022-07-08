@@ -1,10 +1,15 @@
 #include "dataADT.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+
 #define BLOCK 20
-#define MAX_LINE 1024
 #define DIURNO 0
 #define NOCTURNO 1
 #define NO_CARGO 0
 #define CARGO 1
+#define CHECK_ERRNO if(errno==ENOMEM){return ENOMEM;}
 
 typedef struct elemQ1{
     size_t id;
@@ -32,11 +37,15 @@ typedef struct dataCDT{
     size_t posNewElem;
     listQ2 firstQ2;
     listQ2 iterador;
-    elemQ3 dias[7];
+    elemQ3 dias[CANT_DIAS];
 }dataCDT;
 
 dataADT newData(char* dias[CANT_DIAS]){
     dataADT new= calloc(1, sizeof(dataCDT));
+    if(errno==ENOMEM)
+    {
+        return NULL;
+    }
     for(int i=0;i<CANT_DIAS;i++)
     {
         new->dias[i].dia=dias[i];
@@ -71,33 +80,22 @@ static int dondeEsta(const size_t id,elemQ1* sensor,const size_t posNewElem)
  */
 static int cargarActivos(const size_t id,char* name, dataADT data)
 {
-    if (data->posNewElem==data->dimVQ1)
-    {
-        data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
-        data->dimVQ1+=BLOCK;
-        for(int i=data->posNewElem;i<data->dimVQ1;i++)
-        {
-            data->VQ1[i].id=0;
-        }
-    }
+    
     int posElem=dondeEsta(id,data->VQ1,data->posNewElem);
-    if (posElem==data->posNewElem)
+    if (posElem==data->posNewElem) //Entra si no esta repetido
     {
-        if (errno==ENOMEM)
+        if (data->posNewElem==data->dimVQ1)
         {
-            return ENOMEM;
+            data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*(BLOCK+data->dimVQ1));
+            CHECK_ERRNO
+            data->dimVQ1+=BLOCK;
         }
-        else
-        {
-            data->VQ1[posElem].id=id;
-            data->VQ1[posElem].name = malloc(strlen(name)+1);
-            strcpy(data->VQ1[posElem].name, name);
-            data->VQ1[posElem].cantP_sensor=0; //puede estar en 0 porque hago realloc
-            data->posNewElem++;
-        }
-    }
-    else{
-        errno=0;
+        data->VQ1[posElem].id=id;
+        data->VQ1[posElem].name = malloc(strlen(name)+1);
+        CHECK_ERRNO
+        strcpy(data->VQ1[posElem].name, name);
+        data->VQ1[posElem].cantP_sensor=0; //tengo que ponerlo en 0 porque puede haber basura
+        data->posNewElem++;
     }
     return OK;
 }
@@ -162,24 +160,25 @@ static int compare(const void* elem1,const void* elem2)
  * @brief ajusta el tamaño del vector que contiene los sensores, ya que como se agregan bloques, puede sobrar memoria
  * @param data          puntero a la estructura de almacenamiento
  */
-static void ajusteRealloc (dataADT data){
+static int ajusteRealloc (dataADT data){
     data->dimVQ1=data->posNewElem;
     data->VQ1=realloc(data->VQ1,sizeof(elemQ1)*data->dimVQ1);
+    CHECK_ERRNO
+    return OK;
 }
 
-/**
- * @brief ordena el vector de sensores utilizando como criterio la funcion compare
- *        Ordena de forma descendiente por cantidad de persoas y en caso que la cantidad de personas sea igual, alfabeticamente
- * @param data          puntero a la estructura de almacenamiento
- * @return              devuelve un elemento del codigo de errores
- * 
- */
+
 int ordenarSensors(dataADT data)
 {
     if(data==NULL)
         return NOT_PROCESSED;
     if(data->VQ1!=NULL){
-        ajusteRealloc(data);
+        int flagMem=OK;
+        flagMem=ajusteRealloc(data);
+        if (flagMem!=OK)
+        {
+            return NO_MEMORY;
+        }
         qsort(data->VQ1, data->dimVQ1, sizeof(elemQ1), compare);
     }
     return OK;
@@ -202,10 +201,13 @@ static listQ2 addYearRec(listQ2 l,const unsigned short year,const size_t cantPer
         {
             *flag=ENOMEM;
         }
-        aux->anio = year;
-        aux->cantP_anio = cantPers;
-        aux->tail=l;
-        return aux;
+        else
+        {
+            aux->anio = year;
+            aux->cantP_anio = cantPers;
+            aux->tail=l;
+            return aux;
+        }
     }
     else if(year == l->anio){
         l->cantP_anio += cantPers;
@@ -243,9 +245,9 @@ static int addYear (dataADT data,const unsigned short year,const size_t cantPers
 static void agregarPersdia(dataADT data,const unsigned short time,const size_t cantPers,const char* dia)
 {
     int i;
-    for(i=0;i<7 && strcmp(data->dias[i].dia,dia)!=0;i++);
-    
-    if (i<7)
+    for(i=0;i<CANT_DIAS && strcmp(data->dias[i].dia,dia)!=0;i++);
+
+    if (i<CANT_DIAS)
     {
         if (time==DIURNO)
         {

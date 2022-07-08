@@ -1,9 +1,6 @@
 #ifndef TPE_FINAL_LECTURA_H
 #define TPE_FINAL_LECTURA_H
-#include "dataADT.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
 #define MAX_LINE 1024
 #define COLUMNAS_SENSORS 3
 #define COLUMNAS_READINGS 7

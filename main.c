@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include "dataADT.h"
 #include "lectura.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "queries.h"
 
-#define MAX_LINE 1024
+
 
 #define VERIFICA_PROCESADO(x) if(x == NOT_PROCESSED) {\
                                 printf("Los datos no fueron procesados.\n");\
@@ -53,10 +56,13 @@ int main(int argc, char *argv[]){
         return NOT_EXIST;
     }
 
-    errno = 0;
+    flag = 0;
     dataADT data = newData(nombre_dias);
-    if(errno == ENOMEM){
-        return ENOMEM;
+    if(data == NULL){
+        printf("No hay mas memoria disponible\n");
+        fclose(sensors);
+        fclose(readings);
+        return NO_MEMORY;
     }
     
     //LEER
