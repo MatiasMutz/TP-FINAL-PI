@@ -25,7 +25,7 @@ La salida seran 3 archivos .csv con los datos procesados según 3 consultas dist
 2) Desde la terminal, colocarse en la carpeta donde están los archivos descargados e intertar el siguiente comando:
 `make`
 
-Este comando compila el programa y crea el archivo ejecutable.
+Este comando compila el programa y crea el archivo ejecutable llamado pedestrians.
 
 3) Ahora ya se puede ejecutar el programa de la siguiente manera:
 `./pedestrians readings.csv sensors.csv`
